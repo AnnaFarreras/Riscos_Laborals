@@ -13,6 +13,7 @@
       border-radius: 5px;
       overflow: hidden;
       margin-bottom: 1rem;
+      position: relative; /* Necesario para posicionar el texto de porcentaje si lo quisieras dentro y separado, pero lo moveremos fuera */
     }
 
     #progress-bar {
@@ -20,8 +21,7 @@
       background-color: #4CAF50;
       width: 0%;
       border-radius: 5px;
-      text-align: center;
-      color: white;
+      /* ELIMINADO: text-align, color, line-height para que el texto NO aparezca dentro de la barra */
       transition: width 0.5s ease-in-out;
     }
 
@@ -66,11 +66,6 @@
     }
 
     .fade { transition: all 0.3s ease-in-out; }
-    /* input[type="text"]:focus { */
-    /* border-color: #3B82F6; */
-    /* box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.45); */
-    /* outline: none; */
-    /* } */
 
     .disabled-option {
       pointer-events: none;
@@ -88,16 +83,14 @@
       <button onclick="iniciaNivell(3)" class="level-button bg-purple-600 text-white px-5 py-2 rounded-lg hover:bg-purple-700 transition-colors duration-200">Nivell 3</button>
     </div>
 
-    <div id="progress-container" class="mb-6 hidden">
-      <div id="progress-bar">0%</div>
-    </div>
-
     <div id="quiz-container" class="hidden">
+      <div id="progress-container" class="mb-2">
+        <div id="progress-bar"></div>
+      </div>
       <div id="question-area"></div>
       <div id="feedback" class="mt-4 text-center text-lg font-semibold"></div>
       <div class="flex justify-between items-center mt-6">
-        <div id="score" class="text-base text-gray-600">Encerts: 0 / 0</div>
-        <button id="next-btn" class="hidden bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">Següent</button>
+        <div id="score" class="text-base text-gray-600">Encerts totals: 0 / 0</div> <button id="next-btn" class="hidden bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">Següent</button>
       </div>
     </div>
 
@@ -179,7 +172,7 @@
             "Constituyendo un servicio de prevención ajeno",
             "Designando a uno o varios trabajadores para que la lleven a cabo."
           ],
-correcta: 0
+          correcta: 0
         },
         {
           pregunta: "En una empresa de 40 trabajadores es obligatorio que exista:",
@@ -304,7 +297,7 @@ correcta: 0
           opcionsDesplegable: ["factores o métodos", "agentes o procedimientos", "peligros o procesos", "sustancias o condiciones"]
         },
         {
-          pregunta: "¿Cuál es el principal derecho de los trabajadores en materia de prevención?",
+          pregunta: "Cuál es el principal derecho de los trabajadores en materia de prevención?",
           tipus: "test",
           opcions: [
             "Derecho a un salario más alto.",
@@ -321,7 +314,7 @@ correcta: 0
           opcionsDesplegable: ["rentabilidad", "productividad", "seguridad y salud", "innovación"]
         },
         {
-          pregunta: "Relaciona la obligación del empresario con su descripción:",
+          pregunta: "Relaciona cada obligación del empresario con su descripción:",
           tipus: "relacionar",
           parelles: [
             { esquerra: "Integración de la prevención", correcta: "La prevención debe formar parte del sistema de gestión de la empresa." },
@@ -448,7 +441,7 @@ correcta: 0
           opcionsDesplegable: ["social", "natural", "de vida", "de trabajo"]
         },
         {
-          pregunta: "¿Qué técnica preventiva se enfoca en el estudio de las condiciones ambientales de trabajo y los agentes contaminantes?",
+          pregunta: "¿Qué técnica preventiva se encarga de analizar las condiciones ambientales de trabajo y los agentes contaminantes?",
           tipus: "test",
           opcions: [
             "Seguridad en el Trabajo",
@@ -559,7 +552,7 @@ correcta: 0
       3: [
         // Nuevas preguntas del PowerPoint - Nivel 3
         {
-          pregunta: "La Ley de Prevención de Riesgos Laborales se aplica a:",
+          pregunta: "La Ley de Prevención de Risgos Laborales se aplica a:",
           tipus: "test",
           opcions: [
             "Solo trabajadores por cuenta ajena.",
@@ -736,21 +729,20 @@ correcta: 0
     };
 
     let nivellActual = 0;
-    let preguntesActuals = [];
-    let preguntaIndexActual = 0;
-    let encerts = 0;
-    let totalPreguntesRespostes = 0; // Preguntes que el usuari ja ha intentat respondre (encertades o fallades)
-    let preguntesPendentsRepas = []; // Para el modo repaso, almacena las preguntas falladas
-    let modeRepasActiu = false;
+    let preguntesOriginalsNivell = []; // Contiene todas las preguntas del nivel (base para el total)
+    let preguntesPendents = []; // Preguntas que aún deben ser acertadas para "completar" el nivel
+    let preguntaIndexActual = 0; // Índice de la pregunta actual dentro de preguntesPendents
+    let encerts = 0; // Conteo de aciertos totales (puede incluir aciertos de preguntas repetidas)
+    let totalPreguntasRespondidasEnNivel = 0; // Contador para el total de preguntas respondidas en el nivel actual
 
     const quizContainer = document.getElementById('quiz-container');
     const questionArea = document.getElementById('question-area');
     const feedbackDiv = document.getElementById('feedback');
-    const scoreDisplay = document.getElementById('score');
+    const scoreDisplay = document.getElementById('score'); // Correcto: "Encerts totals"
     const nextBtn = document.getElementById('next-btn');
     const progressBar = document.getElementById('progress-bar');
     const progressContainer = document.getElementById('progress-container');
-    const barraNivells = document.getElementById('barra-nivells');
+    // const progressText = document.getElementById('progress-text'); // ESTA LÍNEA TAMBIÉN HA SIDO COMENTADA/ELIMINADA
 
     // Modals
     const nivellCompletatModal = document.getElementById('nivellCompletatModal');
@@ -762,28 +754,24 @@ correcta: 0
 
     // Listener para el botón "Següent"
     nextBtn.addEventListener('click', () => {
-      preguntaIndexActual++;
-      feedbackDiv.textContent = ''; // Limpiar feedback
-      nextBtn.classList.add('hidden'); // Ocultar botón
-      mostrarPregunta();
+        feedbackDiv.textContent = ''; // Limpiar feedback
+        nextBtn.classList.add('hidden'); // Ocultar botón
+        mostrarPregunta();
     });
+
 
     function iniciaNivell(nivell) {
       nivellActual = nivell;
-      preguntesActuals = [...totsElsNivellsPreguntes[nivellActual]]; // Copia de las preguntas del nivel
-      preguntaIndexActual = 0;
-      encerts = 0;
-      totalPreguntesRespostes = 0;
-      preguntesPendentsRepas = [];
-      modeRepasActiu = false;
-
-      // Shuffle questions for the current level
-      preguntesActuals = shuffleArray(preguntesActuals);
+      preguntesOriginalsNivell = [...totsElsNivellsPreguntes[nivellActual]]; // Copia las preguntas originales del nivel
+      preguntesPendents = shuffleArray([...preguntesOriginalsNivell]); // Todas las preguntas al inicio son pendientes
+      preguntaIndexActual = 0; // Se reinicia el índice para el array mezclado
+      encerts = 0; // Reiniciar aciertos para el nuevo nivel
+      totalPreguntasRespondidasEnNivel = 0; // Reiniciar el contador de preguntas respondidas para el nivel
 
       quizContainer.classList.remove('hidden');
       progressContainer.classList.remove('hidden');
-      scoreDisplay.textContent = `Encerts: 0 / 0`;
-      updateProgressBar();
+      updateScoreText(); // Inicializa el score
+      updateProgressBar(); // Inicializa la barra de progreso
       mostrarPregunta();
       amagaModal(); // Asegurarse de que los modales estén ocultos al iniciar nivel
       amagaRepasModal();
@@ -799,34 +787,70 @@ correcta: 0
     }
 
     function mostrarPregunta() {
-      if (preguntaIndexActual < preguntesActuals.length) {
-        const pregunta = preguntesActuals[preguntaIndexActual];
-        questionArea.innerHTML = ''; // Limpiar contenido anterior
-
-        const preguntaText = document.createElement('p');
-        preguntaText.classList.add('mb-4', 'font-medium', 'text-xl');
-        preguntaText.innerHTML = pregunta.pregunta;
-        questionArea.appendChild(preguntaText);
-
-        switch (pregunta.tipus) {
-          case 'test':
-            mostrarPreguntaTest(pregunta);
-            break;
-          case 'completar':
-            mostrarPreguntaCompletar(pregunta);
-            break;
-          case 'relacionar':
-            mostrarPreguntaRelacionar(pregunta);
-            break;
-        }
-        feedbackDiv.textContent = '';
-        nextBtn.classList.add('hidden'); // Ocultar el botón "Siguiente" hasta que se responda
-        desbloquejaInteraccio(); // Asegurarse de que las opciones estén habilitadas
-      } else {
-        // Nivel completado
+      if (preguntesPendents.length === 0) {
         mostraNivellCompletatModal();
+        return;
       }
+
+      if (preguntaIndexActual >= preguntesPendents.length) {
+          preguntesPendents = shuffleArray(preguntesPendents); // Mezcla las pendientes
+          preguntaIndexActual = 0; // Reinicia el índice para la nueva tanda
+      }
+
+      const pregunta = preguntesPendents[preguntaIndexActual];
+      questionArea.innerHTML = ''; // Limpiar contenido anterior
+
+      const preguntaText = document.createElement('p');
+      preguntaText.classList.add('mb-4', 'font-medium', 'text-xl');
+      preguntaText.innerHTML = pregunta.pregunta;
+      questionArea.appendChild(preguntaText);
+
+      switch (pregunta.tipus) {
+        case 'test':
+          mostrarPreguntaTest(pregunta);
+          break;
+        case 'completar':
+          mostrarPreguntaCompletar(pregunta);
+          break;
+        case 'relacionar':
+          mostrarPreguntaRelacionar(pregunta);
+          break;
+      }
+      feedbackDiv.textContent = '';
+      nextBtn.classList.add('hidden'); // Ocultar el botón "Siguiente" hasta que se responda
+      desbloquejaInteraccio(); // Asegurarse de que las opciones estén habilitadas
     }
+
+    function validarRespuesta(esCorrecta) {
+      bloquejaInteraccio();
+      nextBtn.classList.remove('hidden');
+
+      totalPreguntasRespondidasEnNivel++; // Incrementa el contador de preguntas respondidas en ESTE NIVEL (para el score)
+
+      const preguntaActual = preguntesPendents[preguntaIndexActual]; // La pregunta que se acaba de responder
+
+      if (esCorrecta) {
+        feedbackDiv.innerHTML = "<p class='text-green-600 font-bold'>😊 Molt bé, has encertat la pregunta!</p>";
+        encerts++;
+        
+        // Si la pregunta actual está en preguntesPendents, la removemos.
+        preguntesPendents.splice(preguntaIndexActual, 1);
+        // NO incrementamos preguntaIndexActual aquí, porque al eliminar un elemento,
+        // el siguiente elemento se "mueve" a la posición actual.
+      } else {
+        feedbackDiv.innerHTML = "<p class='text-red-600 font-bold'>😢 Ohhh! No és correcte!</p>";
+        registraFallada(preguntaActual); // Registra la pregunta fallada para el repaso final
+        
+        // Si se falla, la pregunta se mantiene en `preguntesPendents` y, para que se repita más tarde,
+        // la movemos al final de la lista.
+        const preguntaMovida = preguntesPendents.splice(preguntaIndexActual, 1)[0];
+        preguntesPendents.push(preguntaMovida);
+      }
+      
+      updateScoreText(); // Actualizar el marcador de aciertos (Encerts totals)
+      updateProgressBar(); // Actualizar la barra de progreso
+    }
+
 
     function mostrarPreguntaTest(pregunta) {
       const opcionesDiv = document.createElement('div');
@@ -837,30 +861,19 @@ correcta: 0
         const button = document.createElement('button');
         button.classList.add('opc', 'w-full', 'text-left', 'px-4', 'py-3', 'mb-2', 'border', 'rounded-lg', 'bg-gray-50', 'hover:bg-gray-100', 'transition-colors', 'duration-150');
         button.innerHTML = opcion;
-        button.onclick = () => validarRespuestaTest(index, pregunta.correcta);
+        button.onclick = () => {
+          const esCorrecta = (index === pregunta.correcta);
+          if (esCorrecta) {
+            button.classList.add('bg-green-300', 'text-green-800');
+          } else {
+            button.classList.add('bg-red-300', 'text-red-800');
+            opcionesDiv.children[pregunta.correcta].classList.add('bg-green-300', 'text-green-800'); // Mostrar la correcta
+          }
+          validarRespuesta(esCorrecta);
+        };
         opcionesDiv.appendChild(button);
       });
       questionArea.appendChild(opcionesDiv);
-    }
-
-    function validarRespuestaTest(selectedIndex, correctAnswerIndex) {
-      const buttons = questionArea.querySelectorAll('.opc');
-      bloquejaInteraccio(); // Deshabilitar botones una vez que se ha respondido
-      totalPreguntesRespostes++;
-
-      if (selectedIndex === correctAnswerIndex) {
-        buttons[selectedIndex].classList.add('bg-green-300', 'text-green-800');
-        feedbackDiv.innerHTML = "<p class='text-green-600 font-bold'>😊 Molt bé, has encertat la pregunta!</p>";
-        encerts++;
-      } else {
-        buttons[selectedIndex].classList.add('bg-red-300', 'text-red-800');
-        buttons[correctAnswerIndex].classList.add('bg-green-300', 'text-green-800'); // Mostrar la correcta
-        feedbackDiv.innerHTML = "<p class='text-red-600 font-bold'>😢 Ohhh! No és correcte!</p>";
-        preguntesPendentsRepas.push(preguntesActuals[preguntaIndexActual]);
-      }
-      nextBtn.classList.remove('hidden');
-      scoreDisplay.textContent = `Encerts: ${encerts} / ${totalPreguntesRespostes}`;
-      updateProgressBar();
     }
 
     function mostrarPreguntaCompletar(pregunta) {
@@ -876,30 +889,22 @@ correcta: 0
       `;
       questionArea.appendChild(selectDiv);
 
-      document.getElementById('validar-completar').onclick = () => validarRespuestaCompletar(pregunta.correcta);
-      // No hay evento 'keypress' para select, solo 'change'
-    }
+      document.getElementById('validar-completar').onclick = () => {
+        const select = document.getElementById('respuesta-completar');
+        const userAnswer = select.value.trim();
+        const esCorrecta = (userAnswer === pregunta.correcta);
 
-    function validarRespuestaCompletar(respuestaCorrecta) {
-      const select = document.getElementById('respuesta-completar');
-      const userAnswer = select.value.trim();
+        select.disabled = true; // Deshabilitar select
+        document.getElementById('validar-completar').disabled = true; // Deshabilitar botón de validar
 
-      select.disabled = true; // Deshabilitar select
-      document.getElementById('validar-completar').disabled = true; // Deshabilitar botón de validar
-      totalPreguntesRespostes++;
-
-      if (userAnswer === respuestaCorrecta) {
-        select.classList.add('bg-green-100', 'border-green-500');
-        feedbackDiv.innerHTML = `<p class='text-green-600 font-bold'>😊 Molt bé! La resposta és: ${respuestaCorrecta}</p>`;
-        encerts++;
-      } else {
-        select.classList.add('bg-red-100', 'border-red-500');
-        feedbackDiv.innerHTML = `<p class='text-red-600 font-bold'>😢 No és correcte. La resposta correcta és: <strong>${respuestaCorrecta}</strong></p>`;
-        preguntesPendentsRepas.push(preguntesActuals[preguntaIndexActual]);
-      }
-      nextBtn.classList.remove('hidden');
-      scoreDisplay.textContent = `Encerts: ${encerts} / ${totalPreguntesRespostes}`;
-      updateProgressBar();
+        if (esCorrecta) {
+          select.classList.add('bg-green-100', 'border-green-500');
+        } else {
+          select.classList.add('bg-red-100', 'border-red-500');
+          feedbackDiv.innerHTML = `<p class='text-red-600 font-bold'>😢 No és correcte. La resposta correcta és: <strong>${pregunta.correcta}</strong></p>`;
+        }
+        validarRespuesta(esCorrecta);
+      };
     }
 
 
@@ -907,7 +912,6 @@ correcta: 0
       const relacionarDiv = document.createElement('div');
       relacionarDiv.classList.add('grid', 'grid-cols-2', 'gap-4', 'mb-4');
 
-      // Recoger todas las respuestas correctas para las opciones de la derecha
       let allRightOptions = pregunta.parelles.map(p => p.correcta);
 
       pregunta.parelles.forEach((pareja, index) => {
@@ -928,8 +932,7 @@ correcta: 0
         defaultOption.selected = true;
         select.appendChild(defaultOption);
 
-        // Mezclar las opciones de la derecha una vez para cada desplegable
-        shuffleArray(allRightOptions).forEach(opcion => {
+        shuffleArray([...allRightOptions]).forEach(opcion => { // Barajar para cada select
           const option = document.createElement('option');
           option.value = opcion;
           option.textContent = opcion;
@@ -945,76 +948,65 @@ correcta: 0
       validarBtn.id = 'validar-relacionar';
       validarBtn.classList.add('mt-4', 'bg-blue-600', 'text-white', 'px-5', 'py-2', 'rounded-lg', 'hover:bg-blue-700', 'transition-colors', 'duration-200');
       validarBtn.textContent = 'Comprova';
-      validarBtn.onclick = () => validarRespuestaRelacionar(pregunta);
+      validarBtn.onclick = () => {
+        const selects = questionArea.querySelectorAll('select');
+        let allCorrect = true;
+
+        selects.forEach((select, index) => {
+          select.disabled = true; // Deshabilitar select
+          const correctAnswer = pregunta.parelles[index].correcta;
+          if (select.value === correctAnswer) {
+            select.classList.add('bg-green-100', 'border-green-500');
+          } else {
+            allCorrect = false;
+            select.classList.add('bg-red-100', 'border-red-500');
+            // Opcional: mostrar la respuesta correcta
+            const correctOption = document.createElement('span');
+            correctOption.classList.add('text-sm', 'text-green-700', 'ml-2', 'font-bold');
+            correctOption.textContent = ` (Correcte: ${correctAnswer})`;
+            select.parentNode.appendChild(correctOption);
+          }
+        });
+        validarRespuesta(allCorrect);
+        validarBtn.disabled = true; // Deshabilitar botón de validar
+      };
       questionArea.appendChild(validarBtn);
     }
 
-    function validarRespuestaRelacionar(pregunta) {
-      const selects = questionArea.querySelectorAll('select');
-      let allCorrect = true;
-      totalPreguntesRespostes++;
-
-      selects.forEach((select, index) => {
-        select.disabled = true; // Deshabilitar select
-        const correctAnswer = pregunta.parelles[index].correcta;
-        if (select.value === correctAnswer) {
-          select.classList.add('bg-green-100', 'border-green-500');
-        } else {
-          allCorrect = false;
-          select.classList.add('bg-red-100', 'border-red-500');
-          // Opcional: mostrar la respuesta correcta
-          const correctOption = document.createElement('span');
-          correctOption.classList.add('ml-2', 'text-green-700', 'font-semibold');
-          correctOption.textContent = `(Correcta: ${correctAnswer})`;
-          select.parentNode.appendChild(correctOption);
-        }
-      });
-
-      document.getElementById('validar-relacionar').disabled = true; // Deshabilitar botón de validar
-
-      if (allCorrect) {
-        feedbackDiv.innerHTML = "<p class='text-green-600 font-bold'>😊 Molt bé, has encertat totes les relacions!</p>";
-        encerts++;
-      } else {
-        feedbackDiv.innerHTML = "<p class='text-red-600 font-bold'>😢 No totes les relacions són correctes. Revisa les respostes marcades.</p>";
-        preguntesPendentsRepas.push(preguntesActuals[preguntaIndexActual]);
-      }
-      nextBtn.classList.remove('hidden');
-      scoreDisplay.textContent = `Encerts: ${encerts} / ${totalPreguntesRespostes}`;
-      updateProgressBar();
-    }
-
-
-    function updateProgressBar() {
-      const totalPreguntesNivell = preguntesActuals.length;
-      const percentatge = (preguntaIndexActual / totalPreguntesNivell) * 100;
-      progressBar.style.width = `${percentatge}%`;
-      progressBar.textContent = `${Math.round(percentatge)}%`;
-    }
-
     function bloquejaInteraccio() {
-      const buttons = questionArea.querySelectorAll('button.opc');
-      buttons.forEach(btn => btn.disabled = true);
-      const input = questionArea.querySelector('input[type="text"]');
-      if (input) input.disabled = true;
-      const selects = questionArea.querySelectorAll('select');
-      selects.forEach(sel => sel.disabled = true);
-      const validarBtn = questionArea.querySelector('#validar-completar, #validar-relacionar');
-      if (validarBtn) validarBtn.disabled = true;
+      document.querySelectorAll('#question-area button.opc').forEach(btn => btn.disabled = true);
+      const selectCompletar = document.getElementById('respuesta-completar');
+      if (selectCompletar) selectCompletar.disabled = true;
+      const btnCompletar = document.getElementById('validar-completar');
+      if (btnCompletar) btnCompletar.disabled = true;
+      document.querySelectorAll('#question-area select').forEach(select => select.disabled = true);
+      const btnRelacionar = document.getElementById('validar-relacionar');
+      if (btnRelacionar) btnRelacionar.disabled = true;
     }
 
     function desbloquejaInteraccio() {
-      const buttons = questionArea.querySelectorAll('button.opc');
-      buttons.forEach(btn => btn.disabled = false);
-      const input = questionArea.querySelector('input[type="text"]');
-      if (input) input.disabled = false;
-      const selects = questionArea.querySelectorAll('select');
-      selects.forEach(sel => sel.disabled = false);
-      const validarBtn = questionArea.querySelector('#validar-completar, #validar-relacionar');
-      if (validarBtn) validarBtn.disabled = false;
+      // No necesitamos desbloquear la interacción aquí, ya que cada pregunta se renderiza desde cero
+      // y el botón "Siguiente" o los botones de validación manejan el paso.
+      // Las opciones se habilitan al ser creadas en mostrarPregunta.
     }
 
-    // Funciones de los Modales
+    function updateProgressBar() {
+      const totalPreguntasNivel = preguntesOriginalsNivell.length;
+      const preguntasCompletadas = totalPreguntasNivel - preguntesPendents.length;
+      let percentatge = (preguntasCompletadas / totalPreguntasNivel) * 100;
+      percentatge = isNaN(percentatge) ? 0 : percentatge; // Evitar NaN si totalPreguntasNivel es 0
+      progressBar.style.width = percentatge + '%';
+      
+      // ELIMINADA LA ACTUALIZACIÓN DEL TEXTO DE PROGRESO
+      // progressText.textContent = `Preguntes completades: ${preguntasCompletadas} / ${totalPreguntasNivel}`;
+    }
+
+    function updateScoreText() {
+      // La clave está aquí: encerts es el numerador, totalPreguntasRespondidasEnNivel es el denominador
+      scoreDisplay.textContent = `Encerts totals: ${encerts} / ${totalPreguntasRespondidasEnNivel}`;
+    }
+
+    // Funciones para los Modales
     function mostraNivellCompletatModal() {
       nivellCompletatText.textContent = `Has completat el Nivell ${nivellActual}!`;
       if (nivellActual < Object.keys(totsElsNivellsPreguntes).length) {
@@ -1039,60 +1031,78 @@ correcta: 0
         amagaModal();
         iniciaNivell(nivellActual + 1); // Passa al següent nivell
       } else {
-        mostraFinalTestModal(); // Si ja no hi ha més nivells
+        // Si es el último nivel, muestra el modal de final de test
+        mostraFinalTestModal();
       }
     }
 
-    function mostraFinalTestModal() {
-      finalTestModal.style.display = 'flex';
-    }
+    let preguntesFalladesGlobal = []; // Para acumular todas las preguntas falladas a lo largo de los niveles
 
-    function amagaFinalTestModal() {
-      finalTestModal.style.display = 'none';
+    function registraFallada(preguntaFallada) {
+        // Verifica si la pregunta ya existe en preguntesFalladesGlobal (para evitar duplicados)
+        // Se considera duplicado si la pregunta (el texto) es la misma.
+        const yaExiste = preguntesFalladesGlobal.some(q => q.pregunta === preguntaFallada.pregunta);
+        if (!yaExiste) {
+            preguntesFalladesGlobal.push(preguntaFallada);
+        }
     }
 
     function mostraRepasFallades() {
-      amagaFinalTestModal(); // Asegurarse de ocultar el modal de final de test
-      preguntesFalladesContainer.innerHTML = '';
-      if (preguntesPendentsRepas.length === 0) {
-        preguntesFalladesContainer.innerHTML = '<p class="text-gray-600">¡No has tingut cap fallada en aquest nivell! Genial!</p>';
-      } else {
-        preguntesPendentsRepas.forEach((q, index) => {
-          const divPregunta = document.createElement('div');
-          divPregunta.classList.add('mb-4', 'p-3', 'border', 'rounded-md', 'bg-white', 'shadow-sm');
-          divPregunta.innerHTML = `<p class="font-bold text-red-700 mb-1">Pregunta fallada ${index + 1}:</p><p class="mb-2">${q.pregunta}</p>`;
-          
-          if (q.tipus === 'test') {
-            const respostaCorrectaText = q.opcions[q.correcta];
-            divPregunta.innerHTML += `<p class="text-green-600">**Resposta correcta:** ${respostaCorrectaText}</p>`;
-          } else if (q.tipus === 'completar') {
-            divPregunta.innerHTML += `<p class="text-green-600">**Resposta correcta:** ${q.correcta}</p>`;
-          } else if (q.tipus === 'relacionar') {
-            divPregunta.innerHTML += `<p class="text-green-600 font-bold">**Relacions correctes:**</p><ul>`;
-            q.parelles.forEach(p => {
-              divPregunta.innerHTML += `<li>${p.esquerra}: <strong>${p.correcta}</strong></li>`;
+        amagaModal(); // Asegurarse de que el modal de nivel completado esté oculto
+        amagaFinalTestModal(); // Ocultar el modal de final de test si estaba visible
+
+        if (preguntesFalladesGlobal.length === 0) {
+            preguntesFalladesContainer.innerHTML = '<p class="text-gray-500">¡No has tingut cap fallada! Molt bé!</p>';
+        } else {
+            preguntesFalladesContainer.innerHTML = ''; // Limpiar el contenedor
+            preguntesFalladesGlobal.forEach((pregunta, index) => {
+                const divPregunta = document.createElement('div');
+                divPregunta.classList.add('mb-4', 'p-3', 'border', 'rounded-lg', 'bg-red-50');
+                
+                let respuestaCorrectaTexto = '';
+                switch (pregunta.tipus) {
+                    case 'test':
+                        respuestaCorrectaTexto = pregunta.opcions[pregunta.correcta];
+                        break;
+                    case 'completar':
+                        respuestaCorrectaTexto = pregunta.correcta;
+                        break;
+                    case 'relacionar':
+                        respuestaCorrectaTexto = '<ul>' + pregunta.parelles.map(p => `<li>${p.esquerra}: <strong>${p.correcta}</strong></li>`).join('') + '</ul>';
+                        break;
+                }
+                
+                divPregunta.innerHTML = `
+                    <p class="font-semibold text-gray-800 mb-1">Pregunta ${index + 1}: ${pregunta.pregunta}</p>
+                    <p class="text-red-700">La teva resposta va ser incorrecta.</p>
+                    <p class="text-green-700">La resposta correcta era: ${respuestaCorrectaTexto}</p>
+                `;
+                preguntesFalladesContainer.appendChild(divPregunta);
             });
-            divPregunta.innerHTML += `</ul>`;
-          }
-          preguntesFalladesContainer.appendChild(divPregunta);
-        });
-      }
-      repasModal.style.display = 'flex';
+        }
+        repasModal.style.display = 'flex';
     }
 
     function amagaRepasModal() {
-      repasModal.style.display = 'none';
+        repasModal.style.display = 'none';
     }
 
-    // Utility function to shuffle an array (Fisher-Yates algorithm)
+    function mostraFinalTestModal() {
+        finalTestModal.style.display = 'flex';
+    }
+
+    function amagaFinalTestModal() {
+        finalTestModal.style.display = 'none';
+    }
+
+    // Función de utilidad para barajar arrays
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+        [array[i], array[j]] = [array[j], array[i]];
       }
       return array;
     }
-
   </script>
 </body>
 </html>
