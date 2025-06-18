@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test de Prevenció de Riscos Laborals</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Estils per a la barra de progrés */
+    #progress-container {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    #progress-bar {
+      height: 20px;
+      background-color: #4CAF50;
+      width: 0%;
+      border-radius: 5px;
+      text-align: center;
+      color: white;
+      transition: width 0.5s ease-in-out;
+    }
+
+    /* Estils per al modal */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1000; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .close-button {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .fade { transition: all 0.3s ease-in-out; }
+    input[type="text"]:focus {
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.45);
+      outline: none;
+    }
+
+    .disabled-option {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen p-4 flex items-center justify-center">
+  <div id="app" class="max-w-3xl w-full bg-white shadow-xl rounded-2xl p-6">
+    <h1 class="text-3xl font-bold mb-6 text-center text-blue-700">Test de Prevenció de Riscos Laborals</h1>
+
+    <div id="barra-nivells" class="flex flex-wrap justify-center gap-3 mb-6">
+      <button onclick="iniciaNivell(1)" class="level-button bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">Nivell 1</button>
+      <button onclick="iniciaNivell(2)" class="level-button bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200">Nivell 2</button>
+      <button onclick="iniciaNivell(3)" class="level-button bg-purple-600 text-white px-5 py-2 rounded-lg hover:bg-purple-700 transition-colors duration-200">Nivell 3</button>
+    </div>
+
+    <div id="progress-container" class="mb-6 hidden">
+      <div id="progress-bar">0%</div>
+    </div>
+
+    <div id="quiz-container" class="hidden">
+      <div id="question-area"></div>
+      <div id="feedback" class="mt-4 text-center text-lg font-semibold"></div>
+      <div class="flex justify-between items-center mt-6">
+        <div id="score" class="text-base text-gray-600">Encerts: 0 / 0</div>
+        <button id="next-btn" class="hidden bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">Següent</button>
+      </div>
+    </div>
+
+    <div id="nivellCompletatModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" onclick="amagaModal()">&times;</span>
+        <h2 id="nivellCompletatText" class="text-2xl font-bold mb-4"></h2>
+        <p class="text-gray-700 mb-6">Has respost totes les preguntes d'aquest nivell.</p>
+        <button onclick="repetirNivell()" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors duration-200 mr-4">Repetir Nivell</button>
+        <button id="botoPujarNivell" onclick="pujarNivell()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 hidden">Pujar al següent Nivell</button>
+      </div>
+    </div>
+
+    <div id="repasModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" onclick="amagaRepasModal()">&times;</span>
+        <h2 class="text-2xl font-bold mb-4">Repàs de Preguntes Fallades</h2>
+        <p class="text-gray-700 mb-6">Aquí tens les preguntes que no has encertat per revisar-les.</p>
+        <div id="preguntesFalladesContainer" class="text-left max-h-80 overflow-y-auto mb-6 p-2 border rounded-lg bg-gray-50"></div>
+        <button onclick="amagaRepasModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">Entenc</button>
+      </div>
+    </div>
+
+    <div id="finalTestModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" onclick="amagaFinalTestModal()">&times;</span>
+        <h2 class="text-2xl font-bold mb-4">¡Test Finalitzat!</h2>
+        <p class="text-gray-700 mb-6">Has completat tots els nivells. ¡Felicitats!</p>
+        <button onclick="iniciaNivell(1); amagaFinalTestModal();" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 mr-4">Tornar a començar</button>
+        <button onclick="mostraRepasFallades()" class="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200">Revisar fallades</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let totsElsNivellsPreguntes = {
+      1: [
+        // Preguntas del PDF - Ejercicio 1 (Test)
+        {
+          pregunta: "Según la Organización Mundial de la Salud (OMS), la salud se puede definir como:",
+          tipus: "test",
+          opcions: [
+            "No padecer enfermedades físicas",
+            "No sufrir enfermedades psíquicas.",
+            "No padecer estrés.",
+            "El estado completo del bienestar físico, psíquico y social."
+          ],
+          correcta: 3
+        },
+        {
+          pregunta: "Los daños derivados del trabajo son:",
+          tipus: "test",
+          opcions: [
+            "Las enfermedades patológicas o lesiones sufridas con motivo u ocasión del trabajo.",
+            "Las incapacidades temporales con baja superior a cinco días",
+            "La insatisfacción laboral por los ritmos de trabajo.",
+            "Las lesiones producidas por no utilizar los medios de protección personal."
+          ],
+          correcta: 0
+        },
+        {
+          pregunta: "La Ley de Prevención de Riesgos Laborales entiende por accidente:",
+          tipus: "test",
+          opcions: [
+            "El suceso que produce lesiones al trabajador.",
+            "El acontecimiento que causa daños a la maquinaria de la empresa.",
+            "Cualquier acontecimiento imprevisto que interrumpa o interfiera el proceso ordenado de la actividad laboral, aún cuando no haya habido personas lesionadas.",
+            "El suceso que produce daños materiales y lesiones corporales."
+          ],
+          correcta: 2
+        },
+        {
+          pregunta: "El empresario organizará el desarrollo de la actividad preventiva en las empresas que carezcan de riesgos importantes y que tengan menos de 6 trabajadores:",
+          tipus: "test",
+          opcions: [
+            "Asumiendo personalmente la actividad.",
+            "Constituyendo un servicio de prevención propio.",
+            "Constituyendo un servicio de prevención ajeno",
+            "Designando a uno o varios trabajadores para que la lleven a cabo."
+          ],
+          correcta: 0
+        },
+        {
+          pregunta: "En una empresa de 40 trabajadores es obligatorio que exista:",
+          tipus: "test",
+          opcions: [
+            "Un Servicio de Prevención Propio.",
+            "Uno o varios trabajadores designados.",
+            "Un Servicio de Prevención Ajeno.",
+            "Un comité de seguridad y salud."
+          ],
+          correcta: 1
+        },
+        // Preguntas nuevas del PowerPoint - Nivel 1
+        {
+          pregunta: "¿Qué tres elementos principales se relacionan en el contexto de la prevención de riesgos laborales?",
+          tipus: "test",
+          opcions: [
+            "Producción, Beneficios y Empleados",
+            "Empresa, Trabajadores y Seguridad y Salud",
+            "Costos, Calidad y Riesgos",
+            "Mercado, Clientes y Proveedores"
+          ],
+          correcta: 1
+        },
+        {
+          pregunta: "El trabajo, si se realiza en condiciones adecuadas a nuestras capacidades personales y en condiciones ambientales y de seguridad, puede suponer una fuente de ____________ personal y por tanto de salud.",
+          tipus: "completar",
+          correcta: "autorrealización"
+        },
+        {
+          pregunta: "¿Cuál es la principal razón por la que trabajamos, según el temario?",
+          tipus: "test",
+          opcions: [
+            "Por desarrollo personal",
+            "Por dinero",
+            "Para satisfacer nuestras necesidades",
+            "Para una vida más cómoda"
+          ],
+          correcta: 2
+        },
+        {
+          pregunta: "El objetivo fundamental de la prevención de riesgos laborales es:",
+          tipus: "test",
+          opcions: [
+            "Reducir los costes empresariales.",
+            "Aumentar la productividad de los trabajadores.",
+            "Conseguir que las condiciones de trabajo no perjudiquen la salud de los trabajadores/as.",
+            "Cumplir con las normativas legales mínimas."
+          ],
+          correcta: 2
+        },
+        {
+          pregunta: "Relaciona cada técnica preventiva con su objetivo principal:",
+          tipus: "relacionar",
+          parelles: [
+            { esquerra: "Seguridad en el Trabajo", opciones: ["Estudia las condiciones materiales del trabajo para evitar accidentes.", "Se ocupa de los agentes contaminantes en el ambiente de trabajo.", "Se centra en el diseño de puestos de trabajo y el bienestar psicosocial.", "Analiza los factores psicosociales y la organización del trabajo."], correcta: "Estudia las condiciones materiales del trabajo para evitar accidentes." },
+            { esquerra: "Higiene Industrial", opciones: ["Estudia las condiciones materiales del trabajo para evitar accidentes.", "Se ocupa de los agentes contaminantes en el ambiente de trabajo.", "Se centra en el diseño de puestos de trabajo y el bienestar psicosocial.", "Analiza los factores psicosociales y la organización del trabajo."], correcta: "Se ocupa de los agentes contaminantes en el ambiente de trabajo." },
+            { esquerra: "Ergonomía", opciones: ["Estudia las condiciones materiales del trabajo para evitar accidentes.", "Se ocupa de los agentes contaminantes en el ambiente de trabajo.", "Se centra en el diseño de puestos de trabajo y el bienestar psicosocial.", "Analiza los factores psicosociales y la organización del trabajo."], correcta: "Se centra en el diseño de puestos de trabajo y el bienestar psicosocial." },
+            { esquerra: "Psicosociología Aplicada", opciones: ["Estudia las condiciones materiales del trabajo para evitar accidentes.", "Se ocupa de los agentes contaminantes en el ambiente de trabajo.", "Se centra en el diseño de puestos de trabajo y el bienestar psicosocial.", "Analiza los factores psicosociales y la organización del trabajo."], correcta: "Analiza los factores psicosociales y la organización del trabajo." }
+          ]
+        },
+        {
+          pregunta: "¿Qué técnica preventiva se encarga de analizar las condiciones materiales del trabajo para evitar accidentes?",
+          tipus: "test",
+          opcions: [
+            "Higiene Industrial",
+            "Ergonomía",
+            "Seguridad en el Trabajo",
+            "Medicina del Trabajo"
+          ],
+          correcta: 2
+        },
+        {
+          pregunta: "Las enfermedades, patologías o lesiones sufridas con motivo u ocasión del trabajo se definen como ____________ del trabajo.",
+          tipus: "completar",
+          correcta: "daños derivados"
+        },
+        {
+          pregunta: "¿Qué tipo de riesgo está relacionado con caídas, golpes o proyecciones?",
+          tipus: "test",
+          opcions: [
+            "Riesgos higiénicos",
+            "Riesgos psicosociales",
+            "Riesgos de seguridad",
+            "Riesgos ergonómicos"
+          ],
+          correcta: 2
+        },
+        {
+          pregunta: "Relaciona cada tipo de riesgo con un ejemplo:",
+          tipus: "relacionar",
+          parelles: [
+            { esquerra: "Riesgos de seguridad", opciones: ["Ruido", "Estrés", "Caída al mismo nivel", "Posturas forzadas"], correcta: "Caída al mismo nivel" },
+            { esquerra: "Riesgos higiénicos", opciones: ["Ruido", "Estrés", "Caída al mismo nivel", "Posturas forzadas"], correcta: "Ruido" },
+            { esquerra: "Riesgos ergonómicos", opciones: ["Ruido", "Estrés", "Caída al mismo nivel", "Posturas forzadas"], correcta: "Posturas forzadas" },
+            { esquerra: "Riesgos psicosociales", opciones: ["Ruido", "Estrés", "Caída al mismo nivel", "Posturas forzadas"], correcta: "Estrés" }
+          ]
+        },
+        {
+          pregunta: "Un __________ de trabajo es todo suceso que produce lesiones en el trabajador.",
+          tipus: "completar",
+          correcta: "accidente"
+        },
+        {
+          pregunta: "¿Cuál de los siguientes NO es un tipo de riesgo, según la clasificación general?",
+          tipus: "test",
+          opcions: [
+            "Riesgos de seguridad",
+            "Riesgos económicos",
+            "Riesgos higiénicos",
+            "Riesgos ergonómicos"
+          ],
+          correcta: 1
+        },
+        {
+          pregunta: "Una enfermedad profesional es la contraída a consecuencia del trabajo ejecutado por cuenta ajena en las actividades especificadas en el cuadro de enfermedades profesionales, y que esté provocada por los ____________ o __________ en dicho cuadro.",
+          tipus: "completar",
+          correcta: "agentes o procedimientos"
+        },
+        {
+          pregunta: "¿Cuál es el principal derecho de los trabajadores en materia de prevención?",
+          tipus: "test",
+          opcions: [
+            "Derecho a un salario más alto.",
+            "Derecho a la protección eficaz en materia de seguridad y salud.",
+            "Derecho a elegir su horario de trabajo.",
+            "Derecho a vacaciones pagadas."
+          ],
+          correcta: 1
+        },
+        {
+          pregunta: "El empresario tiene la obligación de garantizar la __________ en materia de seguridad y salud en el trabajo.",
+          tipus: "completar",
+          correcta: "seguridad y salud"
+        },
+        {
+          pregunta: "Relaciona la obligación del empresario con su descripción:",
+          tipus: "relacionar",
+          parelles: [
+            { esquerra: "Integración de la prevención", opciones: ["Formar e informar a los trabajadores.", "La prevención debe formar parte del sistema de gestión de la empresa.", "Realizar una evaluación de los riesgos.", "Asegurar que los costes de prevención no recaen en el trabajador."], correcta: "La prevención debe formar parte del sistema de gestión de la empresa." },
+            { esquerra: "Evaluación de riesgos", opciones: ["Formar e informar a los trabajadores.", "La prevención debe formar parte del sistema de gestión de la empresa.", "Realizar una evaluación de los riesgos.", "Asegurar que los costes de prevención no recaen en el trabajador."], correcta: "Realizar una evaluación de los riesgos." },
+            { esquerra: "Información y formación", opciones: ["Formar e informar a los trabajadores.", "La prevención debe formar parte del sistema de gestión de la empresa.", "Realizar una evaluación de los riesgos.", "Asegurar que los costes de prevención no recaen en el trabajador."], correcta: "Formar e informar a los trabajadores." },
+            { esquerra: "Asumir los costes", opciones: ["Formar e informar a los trabajadores.", "La prevención debe formar parte del sistema de gestión de la empresa.", "Realizar una evaluación de los riesgos.", "Asegurar que los costes de prevención no recaen en el trabajador."], correcta: "Asegurar que los costes de prevención no recaen en el trabajador." }
+          ]
+        },
+        {
+          pregunta: "El empresario tiene la obligación de ___________ los riesgos laborales.",
+          tipus: "completar",
+          correcta: "evaluar"
+        },
+        {
+          pregunta: "¿Qué obligación tiene el trabajador respecto a su propia seguridad y la de terceros?",
+          tipus: "test",
+          opcions: [
+            "Realizar las tareas que le correspondan, sin importar el riesgo.",
+            "Cooperar con el empresario en el cumplimiento de las obligaciones preventivas.",
+            "Ignorar las normas de seguridad si considera que son ineficientes.",
+            "Asumir los costes de los equipos de protección personal."
+          ],
+          correcta: 1
+        },
+        {
+          pregunta: "La prevención de riesgos laborales debe estar integrada en el sistema general de gestión de la empresa, lo que se conoce como __________.",
+          tipus: "completar",
+          correcta: "integración de la prevención"
+        },
+        {
+          pregunta: "Relaciona cada modalidad de organización preventiva con su ámbito de aplicación general:",
+          tipus: "relacionar",
+          parelles: [
+            { esquerra: "Asunción personal por el empresario", opciones: ["Empresas con menos de 6 trabajadores y sin riesgos especiales.", "Empresas de cualquier tamaño o con riesgos especiales.", "Empresas grandes o con riesgos importantes."], correcta: "Empresas con menos de 6 trabajadores y sin riesgos especiales." },
+            { esquerra: "Trabajador/es Designado/s", opciones: ["Empresas con menos de 6 trabajadores y sin riesgos especiales.", "Empresas entre 6 y 50 trabajadores con riesgo normal, o 250 con un solo centro y riesgo normal.", "Empresas grandes o con riesgos importantes."], correcta: "Empresas entre 6 y 50 trabajadores con riesgo normal, o 250 con un solo centro y riesgo normal." },
+            { esquerra: "Servicio de Prevención Ajeno", opciones: ["Empresas con menos de 6 trabajadores y sin riesgos especiales.", "Empresas entre 6 y 50 trabajadores con riesgo normal, o 250 con un solo centro y riesgo normal.", "Empresas que no pueden asumir la prevención con medios propios."], correcta: "Empresas que no pueden asumir la prevención con medios propios." }
+          ]
+        },
+        {
+          pregunta: "¿Cuál es el órgano paritario y colegiado de participación destinado a la consulta regular y periódica de las actuaciones de la empresa en materia de prevención de riesgos?",
+          tipus: "test",
+          opcions: [
+            "El Comité de Empresa",
+            "El Comité de Seguridad y Salud",
+            "Los Delegados de Personal",
+            "La Inspección de Trabajo"
+          ],
+          correcta: 1
+        }
+      ],
+      2: [
+        // Preguntas del PDF - Ejercicio 4 (Abiertas)
+        {
+          pregunta: "Si el empresario delega las actividades preventivas en trabajadores designados o en un servicio de prevención, ¿queda eximido de su responsabilidad?",
+          tipus: "completar",
+          correcta: "No, la responsabilidad es siempre indelegable."
+        },
+        {
+          pregunta: "¿Sobre quién recae el coste de las medidas relativas a la seguridad y salud en el trabajo?",
+          tipus: "completar",
+          correcta: "El coste recae sobre el empresario. Bajo ningún concepto puede recaer sobre el trabajador."
+        },
+        {
+          pregunta: "¿El tiempo dedicado a la formación en prevención de riesgos laborales es tiempo de trabajo?",
+          tipus: "completar",
+          correcta: "Sí, se considera tiempo de trabajo a todos los efectos."
+        },
+        {
+          pregunta: "¿A través de quién se llevan a cabo las consultas que el empresario debe realizar a los trabajadores en materia de prevención?",
+          tipus: "completar",
+          correcta: "A través de los Delegados de Prevención o, en su defecto, a través de los Representantes de los Trabajadores."
+        },
+        {
+          pregunta: "¿Tienen los trabajadores derecho a la confidencialidad de la información relacionada con su estado de salud?",
+          tipus: "completar",
+          correcta: "Sí, tienen derecho a la confidencialidad de toda la información relacionada con su estado de salud."
+        },
+        {
+          pregunta: "¿Los trabajadores tienen necesariamente que ser acompañados por los delegados de prevención para poner denuncias ante la Inspección de trabajo?",
+          tipus: "completar",
+          correcta: "No, los trabajadores no tienen necesariamente que ser acompañados. Tienen derecho a acudir a la Inspección de Trabajo por sí solos."
+        },
+        // Preguntas del PDF - Ejercicio 5 (Relacionar)
+        {
+          pregunta: "Relaciona los siguientes conceptos con el tipo de riesgo al que corresponden:",
+          tipus: "relacionar",
+          parelles: [
+            { esquerra: "Riesgos derivados de las condiciones de seguridad", opciones: ["CARGA MENTAL", "EL HORARIO Y EL RITMO DE TRABAJO", "EXPOSICIÓN A AGENTES BIOLÓGICOS", "HERRAMIENTAS Y EQUIPOS DE TRABAJO."], correcta: "HERRAMIENTAS Y EQUIPOS DE TRABAJO." },
+            { esquerra: "Riesgos derivados de la organización del trabajo", opciones: ["CARGA MENTAL", "EL HORARIO Y EL RITMO DE TRABAJO", "EXPOSICIÓN A AGENTES BIOLÓGICOS", "HERRAMIENTAS Y EQUIPOS DE TRABAJO."], correcta: "EL HORARIO Y EL RITMO DE TRABAJO" },
+            { esquerra: "Riesgos derivados de la carga de trabajo", opciones: ["CARGA MENTAL", "EL HORARIO Y EL RITMO DE TRABAJO", "EXPOSICIÓN A AGENTES BIOLÓGICOS", "HERRAMIENTAS Y EQUIPOS DE TRABAJO."], correcta: "CARGA MENTAL" },
+            { esquerra: "Riesgos derivados del medio ambiente de trabajo", opciones: ["CARGA MENTAL", "EL HORARIO Y EL RITMO DE TRABAJO", "EXPOSICIÓN A AGENTES BIOLÓGICOS", "HERRAMIENTAS Y EQUIPOS DE TRABAJO."], correcta: "EXPOSICIÓN A AGENTES BIOLÓGICOS" }
+          ]
+        },
+        // Nuevas preguntas del PowerPoint - Nivel 2
+        {
+          pregunta: "¿Qué significan las siglas EPI en el contexto de prevención de riesgos laborales?",
+          tipus: "completar",
+          correcta: "Equipo de Protección Individual"
+        },
+        {
+          pregunta: "¿Cuál es el objetivo principal de la Medicina del Trabajo?",
+          tipus: "test",
+          opcions: [
+            "Curar todas las enfermedades de los trabajadores.",
+            "Promover la salud, curar enfermedades y rehabilitar en el ámbito laboral.",
+            "Realizar reconocimientos médicos anuales obligatorios.",
+            "Dictaminar las causas de los accidentes laborales."
+          ],
+          correcta: 1
+        },
+        {
+          pregunta: "La Medicina del Trabajo se especializa en la interacción entre el ser humano y el medio __________.",
+          tipus: "completar",
+          correcta: "de trabajo"
+        },
+        {
+          pregunta: "¿Qué técnica preventiva se enfoca en el estudio de las condiciones ambientales de trabajo y los agentes contaminantes?",
+          tipus: "test",
+          opcions: [
+            "Seguridad en el Trabajo",
+            "Higiene Industrial",
+            "Ergonomía",
+            "Psicosociología Aplicada"
+          ],
+          correcta: 1
+        },
+        {
+          pregunta: "Un ejemplo de riesgo higiénico sería la exposición a:",
+          tipus: "test",
+          opcions: [
+            "Caídas de objetos",
+            "Estrés laboral",
+            "Ruido excesivo",
+            "Movimientos repetitivos"
+          ],
+          correcta: 2
+        },
+        {
+          pregunta: "La __________ se ocupa del diseño de puestos de trabajo y la adaptación del trabajo a la persona.",
+          tipus: "completar",
+          correcta: "ergonomía"
+        },
+        {
+          pregunta: "Relaciona el tipo de daño derivado del trabajo con su característica principal:",
+          tipus: "relacionar",
+          parelles: [
+            { esquerra: "Accidente de Trabajo", opciones: ["Suceso repentino", "Enfermedad de lenta aparición", "Daño que no es accidente ni enfermedad profesional"], correcta: "Suceso repentino" },
+            { esquerra: "Enfermedad Profesional", opciones: ["Suceso repentino", "Enfermedad de lenta aparición", "Daño que no es accidente ni enfermedad profesional"], correcta: "Enfermedad de lenta aparición" },
+            { esquerra: "Otras patologías o lesiones", opciones: ["Suceso repentino", "Enfermedad de lenta aparición", "Daño que no es accidente ni enfermedad profesional"], correcta: "Daño que no es accidente ni enfermedad profesional" }
+          ]
+        },
+        {
+          pregunta: "Los ____________ son un conjunto de técnicas y procedimientos que tienen por objeto eliminar o reducir el riesgo de que se produzcan accidentes de trabajo.",
+          tipus: "completar",
+          correcta: "riesgos de seguridad"
+        },
+        {
+          pregunta: "¿Qué es un 'incidente' en prevención de riesgos laborales?",
+          tipus: "test",
+          opcions: [
+            "Un accidente con lesiones graves.",
+            "Un suceso en el que no se producen daños ni lesiones, pero que podría haberlos producido.",
+            "Una enfermedad profesional reconocida.",
+            "Una situación de estrés laboral."
+          ],
+          correcta: 1
+        },
+        {
+          pregunta: "La Ley de Prevención de Riesgos Laborales establece el marco normativo básico en España para garantizar la seguridad y salud de los trabajadores. ¿En qué año fue aprobada?",
+          tipus: "test",
+          opcions: [
+            "1985",
+            "1995",
+            "2005",
+            "2015"
+          ],
+          correcta: 1
+        },
+        {
+          pregunta: "Relaciona el concepto con su definición:",
+          tipus: "relacionar",
+          parelles: [
+            { esquerra: "Peligro", opciones: ["Situación o característica intrínseca que puede causar daño.", "Probabilidad de que el daño se materialice.", "Conjunto de medidas para evitar o reducir riesgos."], correcta: "Situación o característica intrínseca que puede causar daño." },
+            { esquerra: "Riesgo", opciones: ["Situación o característica intrínseca que puede causar daño.", "Probabilidad de que el daño se materialice.", "Conjunto de medidas para evitar o reducir riesgos."], correcta: "Probabilidad de que el daño se materialice." },
+            { esquerra: "Prevención", opciones: ["Situación o característica intrínseca que puede causar daño.", "Probabilidad de que el daño se materialice.", "Conjunto de medidas para evitar o reducir riesgos."], correcta: "Conjunto de medidas para evitar o reducir riesgos." }
+          ]
+        },
+        {
+          pregunta: "Las 'causas' de un accidente de trabajo pueden clasificarse en actos inseguros y __________ inseguras.",
+          tipus: "completar",
+          correcta: "condiciones"
+        },
+        {
+          pregunta: "¿Cuál de las siguientes es una técnica preventiva de la Medicina del Trabajo?",
+          tipus: "test",
+          opcions: [
+            "Diseño de maquinaria",
+            "Medición de ruido",
+            "Vigilancia de la salud",
+            "Planificación de emergencias"
+          ],
+          correcta: 2
+        },
+        {
+          pregunta: "Los equipos de protección individual (EPIs) son la primera medida de prevención a aplicar.",
+          tipus: "test",
+          opcions: ["Verdadero", "Falso"],
+          correcta: 1 // Falso, son la última barrera de protección, tras eliminar o reducir el riesgo en origen
+        },
+        {
+          pregunta: "Un riesgo psicosocial puede estar relacionado con:",
+          tipus: "test",
+          opcions: [
+            "Vibraciones",
+            "Productos químicos",
+            "Estrés",
+            "Cortes"
+          ],
+          correcta: 2
+        }
+      ],
+      3: [
+        // Nuevas preguntas del PowerPoint - Nivel 3
+        {
+          pregunta: "La Ley de Prevención de Riesgos Laborales se aplica a:",
+          tipus: "test",
+          opcions: [
+            "Solo trabajadores por cuenta ajena.",
+            "Trabajadores por cuenta ajena y autónomos.",
+            "Todos los trabajadores, incluyendo funcionarios y personal al servicio de las Administraciones Públicas.",
+            "Empresarios únicamente."
+          ],
+          correcta: 2
+        },
+        {
+          pregunta: "El empresario debe garantizar la protección de los trabajadores frente a los riesgos laborales, mediante la adopción de cuántas medidas sean necesarias. Este principio se basa en el deber de ____________.",
+          tipus: "completar",
+          correcta: "protección"
+        },
+        {
+          pregunta: "Relaciona el derecho del trabajador con su descripción:",
+          tipus: "relacionar",
+          parelles: [
+            { esquerra: "Derecho a la información", opciones: ["Conocer los riesgos de su puesto y las medidas preventivas.", "Recibir formación específica y suficiente.", "Proponer mejoras en las condiciones de trabajo.", "Paralizar la actividad si hay riesgo grave e inminente."], correcta: "Conocer los riesgos de su puesto y las medidas preventivas." },
+            { esquerra: "Derecho a la formación", opciones: ["Conocer los riesgos de su puesto y las medidas preventivas.", "Recibir formación específica y suficiente.", "Proponer mejoras en las condiciones de trabajo.", "Paralizar la actividad si hay riesgo grave e inminente."], correcta: "Recibir formación específica y suficiente." },
+            { esquerra: "Derecho de participación y consulta", opciones: ["Conocer los riesgos de su puesto y las medidas preventivas.", "Recibir formación específica y suficiente.", "Proponer mejoras en las condiciones de trabajo.", "Paralizar la actividad si hay riesgo grave e inminente."], correcta: "Proponer mejoras en las condiciones de trabajo." },
+            { esquerra: "Derecho a la paralización", opciones: ["Conocer los riesgos de su puesto y las medidas preventivas.", "Recibir formación específica y suficiente.", "Proponer mejoras en las condiciones de trabajo.", "Paralizar la actividad si hay riesgo grave e inminente."], correcta: "Paralizar la actividad si hay riesgo grave e inminente." }
+          ]
+        },
+        {
+          pregunta: "¿Qué medida se debe adoptar siempre antes de recurrir a los equipos de protección individual (EPIs)?",
+          tipus: "test",
+          opcions: [
+            "Formar al trabajador en el uso del EPI.",
+            "Evaluar el riesgo.",
+            "Adoptar medidas de protección colectiva o eliminar el riesgo en origen.",
+            "Vigilar la salud del trabajador."
+          ],
+          correcta: 2
+        },
+        {
+          pregunta: "Los ____________ de Prevención son los representantes de los trabajadores con funciones específicas en materia de prevención de riesgos laborales.",
+          tipus: "completar",
+          correcta: "Delegados"
+        },
+        {
+          pregunta: "El Comité de Seguridad y Salud es obligatorio en empresas con más de _________ trabajadores.",
+          tipus: "completar",
+          correcta: "50"
+        },
+        {
+          pregunta: "Relaciona el documento preventivo con su objetivo:",
+          tipus: "relacionar",
+          parelles: [
+            { esquerra: "Evaluación de Riesgos", opciones: ["Identificar los peligros y valorar los riesgos para la seguridad y salud.", "Definir cómo se van a controlar y reducir los riesgos identificados.", "Establecer la estructura de la gestión preventiva en la empresa."], correcta: "Identificar los peligros y valorar los riesgos para la seguridad y salud." },
+            { esquerra: "Planificación de la Actividad Preventiva", opciones: ["Identificar los peligros y valorar los riesgos para la seguridad y salud.", "Definir cómo se van a controlar y reducir los riesgos identificados.", "Establecer la estructura de la gestión preventiva en la empresa."], correcta: "Definir cómo se van a controlar y reducir los riesgos identificados." },
+            { esquerra: "Plan de Prevención", opciones: ["Identificar los peligros y valorar los riesgos para la seguridad y salud.", "Definir cómo se van a controlar y reducir los riesgos identificados.", "Establecer la estructura de la gestión preventiva en la empresa."], correcta: "Establecer la estructura de la gestión preventiva en la empresa." }
+          ]
+        },
+        {
+          pregunta: "La vigilancia de la salud debe ser ___________, salvo excepciones como las recogidas en la normativa.",
+          tipus: "completar",
+          correcta: "voluntaria"
+        },
+        {
+          pregunta: "¿Qué organismo es el encargado de la vigilancia y el control del cumplimiento de la normativa de prevención de riesgos laborales?",
+          tipus: "test",
+          opcions: [
+            "El Servicio de Prevención de la empresa.",
+            "El Comité de Seguridad y Salud.",
+            "La Inspección de Trabajo y Seguridad Social.",
+            "Los Delegados de Prevención."
+          ],
+          correcta: 2
+        },
+        {
+          pregunta: "Los accidentes de trabajo deben ser comunicados a la autoridad laboral en un plazo de _________ días hábiles.",
+          tipus: "completar",
+          correcta: "cinco"
+        },
+        {
+          pregunta: "Relaciona el tipo de emergencia con la acción principal:",
+          tipus: "relacionar",
+          parelles: [
+            { esquerra: "Conato de emergencia", opciones: ["Se controla con los medios disponibles en el lugar de trabajo.", "Requiere la actuación de equipos de emergencia externos.", "Se extienden a varios sectores y requieren desalojo parcial.", "Requiere la evacuación total del centro de trabajo."], correcta: "Se controla con los medios disponibles en el lugar de trabajo." },
+            { esquerra: "Emergencia parcial", opciones: ["Se controla con los medios disponibles en el lugar de trabajo.", "Requiere la actuación de equipos de emergencia externos.", "Se extienden a varios sectores y requieren desalojo parcial.", "Requiere la evacuación total del centro de trabajo."], correcta: "Se extienden a varios sectores y requieren desalojo parcial." },
+            { esquerra: "Emergencia general", opciones: ["Se controla con los medios disponibles en el lugar de trabajo.", "Requiere la actuación de equipos de emergencia externos.", "Se extienden a varios sectores y requieren desalojo parcial.", "Requiere la evacuación total del centro de trabajo."], correcta: "Requiere la evacuación total del centro de trabajo." }
+          ]
+        },
+        {
+          pregunta: "¿Quién es el responsable de elaborar y mantener actualizado el Plan de Autoprotección de la empresa?",
+          tipus: "test",
+          opcions: [
+            "Los trabajadores designados.",
+            "El Servicio de Prevención.",
+            "El propio empresario.",
+            "Un técnico externo cualificado."
+          ],
+          correcta: 2 // El empresario es el responsable último de la prevención y, por ende, de los planes de autoprotección.
+        },
+        {
+          pregunta: "La gestión de la prevención en la empresa debe ser un proceso ____________ y ____________.",
+          tipus: "completar",
+          correcta: "continuo y dinámico"
+        },
+        {
+          pregunta: "¿Qué tipo de EPI se utilizaría para proteger las manos de cortes?",
+          tipus: "test",
+          opcions: [
+            "Casco de seguridad",
+            "Gafas de protección",
+            "Guantes anticorte",
+            "Calzado de seguridad"
+          ],
+          correcta: 2
+        },
+        {
+          pregunta: "Relaciona el tipo de EPI con la zona del cuerpo que protege:",
+          tipus: "relacionar",
+          parelles: [
+            { esquerra: "Casco", opciones: ["Vías respiratorias", "Cabeza", "Pies", "Ojos"], correcta: "Cabeza" },
+            { esquerra: "Mascarilla", opciones: ["Vías respiratorias", "Cabeza", "Pies", "Ojos"], correcta: "Vías respiratorias" },
+            { esquerra: "Botas de seguridad", opciones: ["Vías respiratorias", "Cabeza", "Pies", "Ojos"], correcta: "Pies" },
+            { esquerra: "Gafas de seguridad", opciones: ["Vías respiratorias", "Cabeza", "Pies", "Ojos"], correcta: "Ojos" }
+          ]
+        },
+        {
+          pregunta: "La Ley de Prevención de Riesgos Laborales tiene como objetivo promover la mejora de las condiciones de trabajo para elevar el nivel de ____________ y ____________ de los trabajadores.",
+          tipus: "completar",
+          correcta: "seguridad y salud"
+        },
+        {
+          pregunta: "¿Qué principio de la acción preventiva implica adaptar el trabajo a la persona?",
+          tipus: "test",
+          opcions: [
+            "Planificación de la prevención",
+            "Evitar los riesgos",
+            "Evaluar los riesgos inevitables",
+            "Adaptar el trabajo a la persona, en particular en lo que respecta a la concepción de los puestos de trabajo."
+          ],
+          correcta: 3
+        },
+        {
+          pregunta: "Las medidas de emergencia deben incluir los ___________, la ___________ y los ___________ en caso de siniestro.",
+          tipus: "completar",
+          correcta: "primeros auxilios, lucha contra incendios, evacuación de los trabajadores"
+        },
+        {
+          pregunta: "El principio de 'integrar la prevención en el conjunto de actividades de la empresa' significa que debe estar presente en todas las decisiones y en todos los __________.",
+          tipus: "completar",
+          correcta: "niveles"
+        },
+        {
+          pregunta: "¿Qué importancia tiene la 'cooperación' entre empresario y trabajadores en la prevención de riesgos?",
+          tipus: "test",
+          opcions: [
+            "Es opcional y no afecta a la eficacia preventiva.",
+            "Es fundamental para el éxito de la acción preventiva.",
+            "Solo es necesaria en empresas con muchos trabajadores.",
+            "Es responsabilidad exclusiva del empresario."
+          ],
+          correcta: 1
+        }
+      ]
+    };
+
+    let nivellActual = 0;
+    let preguntesActuals = [];
+    let preguntaIndexActual = 0;
+    let encerts = 0;
+    let totalPreguntesRespostes = 0; // Preguntes que el usuari ja ha intentat respondre (encertades o fallades)
+    let preguntesPendentsRepas = []; // Para el modo repaso, almacena las preguntas falladas
+    let modeRepasActiu = false;
+
+    const quizContainer = document.getElementById('quiz-container');
+    const questionArea = document.getElementById('question-area');
+    const feedbackDiv = document.getElementById('feedback');
+    const scoreDisplay = document.getElementById('score');
+    const nextBtn = document.getElementById('next-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const progressContainer = document.getElementById('progress-container');
+    const barraNivells = document.getElementById('barra-nivells');
+
+    // Modals
+    const nivellCompletatModal = document.getElementById('nivellCompletatModal');
+    const nivellCompletatText = document.getElementById('nivellCompletatText');
+    const botoPujarNivell = document.getElementById('botoPujarNivell');
+    const repasModal = document.getElementById('repasModal');
+    const preguntesFalladesContainer = document.getElementById('preguntesFalladesContainer');
+    const finalTestModal = document.getElementById('finalTestModal');
+
+    // Listener para el botón "Següent"
+    nextBtn.addEventListener('click', () => {
+      preguntaIndexActual++;
+      feedbackDiv.textContent = ''; // Limpiar feedback
+      nextBtn.classList.add('hidden'); // Ocultar botón
+      mostrarPregunta();
+    });
+
+    function iniciaNivell(nivell) {
+      nivellActual = nivell;
+      preguntesActuals = [...totsElsNivellsPreguntes[nivellActual]]; // Copia de las preguntas del nivel
+      preguntaIndexActual = 0;
+      encerts = 0;
+      totalPreguntesRespostes = 0;
+      preguntesPendentsRepas = [];
+      modeRepasActiu = false;
+
+      // Shuffle questions for the current level
+      preguntesActuals = shuffleArray(preguntesActuals);
+
+      quizContainer.classList.remove('hidden');
+      progressContainer.classList.remove('hidden');
+      scoreDisplay.textContent = `Encerts: 0 / 0`;
+      updateProgressBar();
+      mostrarPregunta();
+      amagaModal(); // Asegurarse de que los modales estén ocultos al iniciar nivel
+      amagaRepasModal();
+      amagaFinalTestModal();
+      actualitzaEstatBotonsNivell();
+    }
+
+    function actualitzaEstatBotonsNivell() {
+      document.querySelectorAll('.level-button').forEach(btn => {
+        btn.disabled = false;
+        btn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+      });
+      // Deshabilitar botones de niveles superiores si el nivel actual no está completado (opcional, para forzar orden)
+      // for (let i = 1; i <= Object.keys(totsElsNivellsPreguntes).length; i++) {
+      //   const btn = document.querySelector(`.level-button[onclick="iniciaNivell(${i})"]`);
+      //   if (i > nivellActual && nivellActual !== 0) { // Si no estamos en el primer nivel y es un nivel superior
+      //     btn.disabled = true;
+      //     btn.classList.add('bg-gray-400', 'cursor-not-allowed');
+      //   }
+      // }
+    }
+
+
+    function mostrarPregunta() {
+      if (preguntaIndexActual < preguntesActuals.length) {
+        const pregunta = preguntesActuals[preguntaIndexActual];
+        questionArea.innerHTML = ''; // Limpiar contenido anterior
+
+        const preguntaText = document.createElement('p');
+        preguntaText.classList.add('mb-4', 'font-medium', 'text-xl');
+        preguntaText.innerHTML = pregunta.pregunta;
+        questionArea.appendChild(preguntaText);
+
+        switch (pregunta.tipus) {
+          case 'test':
+            mostrarPreguntaTest(pregunta);
+            break;
+          case 'completar':
+            mostrarPreguntaCompletar(pregunta);
+            break;
+          case 'relacionar':
+            mostrarPreguntaRelacionar(pregunta);
+            break;
+        }
+        feedbackDiv.textContent = '';
+        nextBtn.classList.add('hidden'); // Ocultar el botón "Siguiente" hasta que se responda
+        desbloquejaInteraccio(); // Asegurarse de que las opciones estén habilitadas
+      } else {
+        // Nivel completado
+        mostraNivellCompletatModal();
+      }
+    }
+
+    function mostrarPreguntaTest(pregunta) {
+      const opcionesDiv = document.createElement('div');
+      opcionesDiv.id = 'opcions';
+      opcionesDiv.classList.add('grid', 'grid-cols-1', 'gap-3');
+
+      pregunta.opcions.forEach((opcion, index) => {
+        const button = document.createElement('button');
+        button.classList.add('opc', 'w-full', 'text-left', 'px-4', 'py-3', 'mb-2', 'border', 'rounded-lg', 'bg-gray-50', 'hover:bg-gray-100', 'transition-colors', 'duration-150');
+        button.innerHTML = opcion;
+        button.onclick = () => validarRespuestaTest(index, pregunta.correcta);
+        opcionesDiv.appendChild(button);
+      });
+      questionArea.appendChild(opcionesDiv);
+    }
+
+    function validarRespuestaTest(selectedIndex, correctAnswerIndex) {
+      const buttons = questionArea.querySelectorAll('.opc');
+      bloquejaInteraccio(); // Deshabilitar botones una vez que se ha respondido
+      totalPreguntesRespostes++;
+
+      if (selectedIndex === correctAnswerIndex) {
+        buttons[selectedIndex].classList.add('bg-green-300', 'text-green-800');
+        feedbackDiv.innerHTML = "<p class='text-green-600 font-bold'>😊 Molt bé, has encertat la pregunta!</p>";
+        encerts++;
+      } else {
+        buttons[selectedIndex].classList.add('bg-red-300', 'text-red-800');
+        buttons[correctAnswerIndex].classList.add('bg-green-300', 'text-green-800'); // Mostrar la correcta
+        feedbackDiv.innerHTML = "<p class='text-red-600 font-bold'>😢 Ohhh! No és correcte!</p>";
+        preguntesPendentsRepas.push(preguntesActuals[preguntaIndexActual]);
+      }
+      nextBtn.classList.remove('hidden');
+      scoreDisplay.textContent = `Encerts: ${encerts} / ${totalPreguntesRespostes}`;
+      updateProgressBar();
+    }
+
+    function mostrarPreguntaCompletar(pregunta) {
+      const inputDiv = document.createElement('div');
+      inputDiv.classList.add('mb-4');
+      inputDiv.innerHTML = `
+        <label for="respuesta-completar" class="block text-lg font-medium mb-2">Completa la frase:</label>
+        <input type="text" id="respuesta-completar" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Escriu la teva resposta aquí...">
+        <button id="validar-completar" class="mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">Comprova</button>
+      `;
+      questionArea.appendChild(inputDiv);
+
+      document.getElementById('validar-completar').onclick = () => validarRespuestaCompletar(pregunta.correcta);
+      document.getElementById('respuesta-completar').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          document.getElementById('validar-completar').click();
+        }
+      });
+    }
+
+    function validarRespuestaCompletar(respuestaCorrecta) {
+      const input = document.getElementById('respuesta-completar');
+      const userAnswer = input.value.trim().toLowerCase();
+      const normalizedCorrectAnswer = typeof respuestaCorrecta === 'string' ? respuestaCorrecta.toLowerCase() : respuestaCorrecta;
+
+      input.disabled = true; // Deshabilitar input
+      document.getElementById('validar-completar').disabled = true; // Deshabilitar botón de validar
+      totalPreguntesRespostes++;
+
+      if (userAnswer === normalizedCorrectAnswer) {
+        input.classList.add('bg-green-100', 'border-green-500');
+        feedbackDiv.innerHTML = `<p class='text-green-600 font-bold'>😊 Molt bé! La resposta és: ${respuestaCorrecta}</p>`;
+        encerts++;
+      } else {
+        input.classList.add('bg-red-100', 'border-red-500');
+        feedbackDiv.innerHTML = `<p class='text-red-600 font-bold'>😢 No és correcte. La resposta correcta és: <strong>${respuestaCorrecta}</strong></p>`;
+        preguntesPendentsRepas.push(preguntesActuals[preguntaIndexActual]);
+      }
+      nextBtn.classList.remove('hidden');
+      scoreDisplay.textContent = `Encerts: ${encerts} / ${totalPreguntesRespostes}`;
+      updateProgressBar();
+    }
+
+    function mostrarPreguntaRelacionar(pregunta) {
+      const relacionarDiv = document.createElement('div');
+      relacionarDiv.classList.add('grid', 'grid-cols-2', 'gap-4', 'mb-4');
+
+      let opcionesDerecha = pregunta.parelles.map(p => p.opciones).flat();
+      opcionesDerecha = shuffleArray(opcionesDerecha); // Mezclar opciones de la derecha
+
+      pregunta.parelles.forEach((pareja, index) => {
+        const leftSide = document.createElement('div');
+        leftSide.classList.add('text-lg', 'font-medium', 'py-2');
+        leftSide.textContent = pareja.esquerra;
+        relacionarDiv.appendChild(leftSide);
+
+        const selectDiv = document.createElement('div');
+        const select = document.createElement('select');
+        select.id = `relacionar-${index}`;
+        select.classList.add('w-full', 'px-3', 'py-2', 'border', 'rounded-lg', 'bg-white', 'focus:ring-2', 'focus:ring-blue-500');
+
+        const defaultOption = document.createElement('option');
+        defaultOption.value = "";
+        defaultOption.textContent = "Selecciona una opción";
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        select.appendChild(defaultOption);
+
+        opcionesDerecha.forEach(opcion => {
+          const option = document.createElement('option');
+          option.value = opcion;
+          option.textContent = opcion;
+          select.appendChild(option);
+        });
+        selectDiv.appendChild(select);
+        relacionarDiv.appendChild(selectDiv);
+      });
+
+      questionArea.appendChild(relacionarDiv);
+
+      const validarBtn = document.createElement('button');
+      validarBtn.id = 'validar-relacionar';
+      validarBtn.classList.add('mt-4', 'bg-blue-600', 'text-white', 'px-5', 'py-2', 'rounded-lg', 'hover:bg-blue-700', 'transition-colors', 'duration-200');
+      validarBtn.textContent = 'Comprova';
+      validarBtn.onclick = () => validarRespuestaRelacionar(pregunta);
+      questionArea.appendChild(validarBtn);
+    }
+
+    function validarRespuestaRelacionar(pregunta) {
+      const selects = questionArea.querySelectorAll('select');
+      let allCorrect = true;
+      totalPreguntesRespostes++;
+
+      selects.forEach((select, index) => {
+        select.disabled = true; // Deshabilitar select
+        const correctAnswer = pregunta.parelles[index].correcta;
+        if (select.value === correctAnswer) {
+          select.classList.add('bg-green-100', 'border-green-500');
+        } else {
+          allCorrect = false;
+          select.classList.add('bg-red-100', 'border-red-500');
+          // Opcional: mostrar la respuesta correcta
+          const correctOption = document.createElement('span');
+          correctOption.classList.add('ml-2', 'text-green-700', 'font-semibold');
+          correctOption.textContent = `(Correcta: ${correctAnswer})`;
+          select.parentNode.appendChild(correctOption);
+        }
+      });
+
+      document.getElementById('validar-relacionar').disabled = true; // Deshabilitar botón de validar
+
+      if (allCorrect) {
+        feedbackDiv.innerHTML = "<p class='text-green-600 font-bold'>😊 Molt bé, has encertat totes les relacions!</p>";
+        encerts++;
+      } else {
+        feedbackDiv.innerHTML = "<p class='text-red-600 font-bold'>😢 No totes les relacions són correctes. Revisa les respostes marcades.</p>";
+        preguntesPendentsRepas.push(preguntesActuals[preguntaIndexActual]);
+      }
+      nextBtn.classList.remove('hidden');
+      scoreDisplay.textContent = `Encerts: ${encerts} / ${totalPreguntesRespostes}`;
+      updateProgressBar();
+    }
+
+
+    function updateProgressBar() {
+      const totalPreguntesNivell = preguntesActuals.length;
+      const percentatge = (preguntaIndexActual / totalPreguntesNivell) * 100;
+      progressBar.style.width = `${percentatge}%`;
+      progressBar.textContent = `${Math.round(percentatge)}%`;
+    }
+
+    function bloquejaInteraccio() {
+      const buttons = questionArea.querySelectorAll('button.opc');
+      buttons.forEach(btn => btn.disabled = true);
+      const input = questionArea.querySelector('input[type="text"]');
+      if (input) input.disabled = true;
+      const selects = questionArea.querySelectorAll('select');
+      selects.forEach(sel => sel.disabled = true);
+      const validarBtn = questionArea.querySelector('#validar-completar, #validar-relacionar');
+      if (validarBtn) validarBtn.disabled = true;
+    }
+
+    function desbloquejaInteraccio() {
+      const buttons = questionArea.querySelectorAll('button.opc');
+      buttons.forEach(btn => btn.disabled = false);
+      const input = questionArea.querySelector('input[type="text"]');
+      if (input) input.disabled = false;
+      const selects = questionArea.querySelectorAll('select');
+      selects.forEach(sel => sel.disabled = false);
+      const validarBtn = questionArea.querySelector('#validar-completar, #validar-relacionar');
+      if (validarBtn) validarBtn.disabled = false;
+    }
+
+    // Funciones de los Modales
+    function mostraNivellCompletatModal() {
+      nivellCompletatText.textContent = `Has completat el Nivell ${nivellActual}!`;
+      if (nivellActual < Object.keys(totsElsNivellsPreguntes).length) {
+        botoPujarNivell.classList.remove('hidden');
+      } else {
+        botoPujarNivell.classList.add('hidden'); // Últim nivell, no hi ha més per pujar
+      }
+      nivellCompletatModal.style.display = 'flex'; // Mostrar el modal
+    }
+
+    function amagaModal() {
+      nivellCompletatModal.style.display = 'none'; // Amagar el modal
+    }
+
+    function repetirNivell() {
+      amagaModal();
+      iniciaNivell(nivellActual); // Reinicia el nivell actual
+    }
+
+    function pujarNivell() {
+      if (nivellActual < Object.keys(totsElsNivellsPreguntes).length) {
+        amagaModal();
+        iniciaNivell(nivellActual + 1); // Passa al següent nivell
+      } else {
+        mostraFinalTestModal(); // Si ja no hi ha més nivells
+      }
+    }
+
+    function mostraFinalTestModal() {
+      finalTestModal.style.display = 'flex';
+    }
+
+    function amagaFinalTestModal() {
+      finalTestModal.style.display = 'none';
+    }
+
+    function mostraRepasFallades() {
+      amagaFinalTestModal(); // Asegurarse de ocultar el modal de final de test
+      preguntesFalladesContainer.innerHTML = '';
+      if (preguntesPendentsRepas.length === 0) {
+        preguntesFalladesContainer.innerHTML = '<p class="text-gray-600">¡No has tingut cap fallada en aquest nivell! Genial!</p>';
+      } else {
+        preguntesPendentsRepas.forEach((q, index) => {
+          const divPregunta = document.createElement('div');
+          divPregunta.classList.add('mb-4', 'p-3', 'border', 'rounded-md', 'bg-white', 'shadow-sm');
+          divPregunta.innerHTML = `<p class="font-bold text-red-700 mb-1">Pregunta fallada ${index + 1}:</p><p class="mb-2">${q.pregunta}</p>`;
+          
+          if (q.tipus === 'test') {
+            const respostaCorrectaText = q.opcions[q.correcta];
+            divPregunta.innerHTML += `<p class="text-green-600">**Resposta correcta:** ${respostaCorrectaText}</p>`;
+          } else if (q.tipus === 'completar') {
+            divPregunta.innerHTML += `<p class="text-green-600">**Resposta correcta:** ${q.correcta}</p>`;
+          } else if (q.tipus === 'relacionar') {
+            divPregunta.innerHTML += `<p class="text-green-600 font-bold">**Relacions correctes:**</p><ul>`;
+            q.parelles.forEach(p => {
+              divPregunta.innerHTML += `<li>${p.esquerra}: <strong>${p.correcta}</strong></li>`;
+            });
+            divPregunta.innerHTML += `</ul>`;
+          }
+          preguntesFalladesContainer.appendChild(divPregunta);
+        });
+      }
+      repasModal.style.display = 'flex';
+    }
+
+    function amagaRepasModal() {
+      repasModal.style.display = 'none';
+    }
+
+    // Utility function to shuffle an array (Fisher-Yates algorithm)
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+      }
+      return array;
+    }
+
+    // Inicialización al cargar la página (opcional, si quieres que se vea algo antes de seleccionar nivel)
+    // document.addEventListener('DOMContentLoaded', () => {
+    //   // Puedes iniciar un nivel por defecto o mostrar una pantalla de bienvenida
+    //   // iniciaNivell(1);
+    // });
+
+  </script>
+</body>
+</html>
