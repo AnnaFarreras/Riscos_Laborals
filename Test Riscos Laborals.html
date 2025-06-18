@@ -66,11 +66,11 @@
     }
 
     .fade { transition: all 0.3s ease-in-out; }
-    input[type="text"]:focus {
-      border-color: #3B82F6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.45);
-      outline: none;
-    }
+    /* input[type="text"]:focus { */
+    /* border-color: #3B82F6; */
+    /* box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.45); */
+    /* outline: none; */
+    /* } */
 
     .disabled-option {
       pointer-events: none;
@@ -179,7 +179,7 @@
             "Constituyendo un servicio de prevención ajeno",
             "Designando a uno o varios trabajadores para que la lleven a cabo."
           ],
-          correcta: 0
+correcta: 0
         },
         {
           pregunta: "En una empresa de 40 trabajadores es obligatorio que exista:",
@@ -207,7 +207,8 @@
         {
           pregunta: "El trabajo, si se realiza en condiciones adecuadas a nuestras capacidades personales y en condiciones ambientales y de seguridad, puede suponer una fuente de ____________ personal y por tanto de salud.",
           tipus: "completar",
-          correcta: "autorrealización"
+          correcta: "autorrealización",
+          opcionsDesplegable: ["bienestar", "autorrealización", "ingresos", "productividad"]
         },
         {
           pregunta: "¿Cuál es la principal razón por la que trabajamos, según el temario?",
@@ -235,10 +236,10 @@
           pregunta: "Relaciona cada técnica preventiva con su objetivo principal:",
           tipus: "relacionar",
           parelles: [
-            { esquerra: "Seguridad en el Trabajo", opciones: ["Estudia las condiciones materiales del trabajo para evitar accidentes.", "Se ocupa de los agentes contaminantes en el ambiente de trabajo.", "Se centra en el diseño de puestos de trabajo y el bienestar psicosocial.", "Analiza los factores psicosociales y la organización del trabajo."], correcta: "Estudia las condiciones materiales del trabajo para evitar accidentes." },
-            { esquerra: "Higiene Industrial", opciones: ["Estudia las condiciones materiales del trabajo para evitar accidentes.", "Se ocupa de los agentes contaminantes en el ambiente de trabajo.", "Se centra en el diseño de puestos de trabajo y el bienestar psicosocial.", "Analiza los factores psicosociales y la organización del trabajo."], correcta: "Se ocupa de los agentes contaminantes en el ambiente de trabajo." },
-            { esquerra: "Ergonomía", opciones: ["Estudia las condiciones materiales del trabajo para evitar accidentes.", "Se ocupa de los agentes contaminantes en el ambiente de trabajo.", "Se centra en el diseño de puestos de trabajo y el bienestar psicosocial.", "Analiza los factores psicosociales y la organización del trabajo."], correcta: "Se centra en el diseño de puestos de trabajo y el bienestar psicosocial." },
-            { esquerra: "Psicosociología Aplicada", opciones: ["Estudia las condiciones materiales del trabajo para evitar accidentes.", "Se ocupa de los agentes contaminantes en el ambiente de trabajo.", "Se centra en el diseño de puestos de trabajo y el bienestar psicosocial.", "Analiza los factores psicosociales y la organización del trabajo."], correcta: "Analiza los factores psicosociales y la organización del trabajo." }
+            { esquerra: "Seguridad en el Trabajo", correcta: "Estudia las condiciones materiales del trabajo para evitar accidentes." },
+            { esquerra: "Higiene Industrial", correcta: "Se ocupa de los agentes contaminantes en el ambiente de trabajo." },
+            { esquerra: "Ergonomía", correcta: "Se centra en el diseño de puestos de trabajo y el bienestar psicosocial." },
+            { esquerra: "Psicosociología Aplicada", correcta: "Analiza los factores psicosociales y la organización del trabajo." }
           ]
         },
         {
@@ -255,7 +256,8 @@
         {
           pregunta: "Las enfermedades, patologías o lesiones sufridas con motivo u ocasión del trabajo se definen como ____________ del trabajo.",
           tipus: "completar",
-          correcta: "daños derivados"
+          correcta: "daños derivados",
+          opcionsDesplegable: ["riesgos inherentes", "daños derivados", "accidentes", "enfermedades"]
         },
         {
           pregunta: "¿Qué tipo de riesgo está relacionado con caídas, golpes o proyecciones?",
@@ -272,16 +274,17 @@
           pregunta: "Relaciona cada tipo de riesgo con un ejemplo:",
           tipus: "relacionar",
           parelles: [
-            { esquerra: "Riesgos de seguridad", opciones: ["Ruido", "Estrés", "Caída al mismo nivel", "Posturas forzadas"], correcta: "Caída al mismo nivel" },
-            { esquerra: "Riesgos higiénicos", opciones: ["Ruido", "Estrés", "Caída al mismo nivel", "Posturas forzadas"], correcta: "Ruido" },
-            { esquerra: "Riesgos ergonómicos", opciones: ["Ruido", "Estrés", "Caída al mismo nivel", "Posturas forzadas"], correcta: "Posturas forzadas" },
-            { esquerra: "Riesgos psicosociales", opciones: ["Ruido", "Estrés", "Caída al mismo nivel", "Posturas forzadas"], correcta: "Estrés" }
+            { esquerra: "Riesgos de seguridad", correcta: "Caída al mismo nivel" },
+            { esquerra: "Riesgos higiénicos", correcta: "Ruido" },
+            { esquerra: "Riesgos ergonómicos", correcta: "Posturas forzadas" },
+            { esquerra: "Riesgos psicosociales", correcta: "Estrés" }
           ]
         },
         {
           pregunta: "Un __________ de trabajo es todo suceso que produce lesiones en el trabajador.",
           tipus: "completar",
-          correcta: "accidente"
+          correcta: "accidente",
+          opcionsDesplegable: ["incidente", "accidente", "peligro", "riesgo"]
         },
         {
           pregunta: "¿Cuál de los siguientes NO es un tipo de riesgo, según la clasificación general?",
@@ -297,7 +300,8 @@
         {
           pregunta: "Una enfermedad profesional es la contraída a consecuencia del trabajo ejecutado por cuenta ajena en las actividades especificadas en el cuadro de enfermedades profesionales, y que esté provocada por los ____________ o __________ en dicho cuadro.",
           tipus: "completar",
-          correcta: "agentes o procedimientos"
+          correcta: "agentes o procedimientos",
+          opcionsDesplegable: ["factores o métodos", "agentes o procedimientos", "peligros o procesos", "sustancias o condiciones"]
         },
         {
           pregunta: "¿Cuál es el principal derecho de los trabajadores en materia de prevención?",
@@ -313,22 +317,24 @@
         {
           pregunta: "El empresario tiene la obligación de garantizar la __________ en materia de seguridad y salud en el trabajo.",
           tipus: "completar",
-          correcta: "seguridad y salud"
+          correcta: "seguridad y salud",
+          opcionsDesplegable: ["rentabilidad", "productividad", "seguridad y salud", "innovación"]
         },
         {
           pregunta: "Relaciona la obligación del empresario con su descripción:",
           tipus: "relacionar",
           parelles: [
-            { esquerra: "Integración de la prevención", opciones: ["Formar e informar a los trabajadores.", "La prevención debe formar parte del sistema de gestión de la empresa.", "Realizar una evaluación de los riesgos.", "Asegurar que los costes de prevención no recaen en el trabajador."], correcta: "La prevención debe formar parte del sistema de gestión de la empresa." },
-            { esquerra: "Evaluación de riesgos", opciones: ["Formar e informar a los trabajadores.", "La prevención debe formar parte del sistema de gestión de la empresa.", "Realizar una evaluación de los riesgos.", "Asegurar que los costes de prevención no recaen en el trabajador."], correcta: "Realizar una evaluación de los riesgos." },
-            { esquerra: "Información y formación", opciones: ["Formar e informar a los trabajadores.", "La prevención debe formar parte del sistema de gestión de la empresa.", "Realizar una evaluación de los riesgos.", "Asegurar que los costes de prevención no recaen en el trabajador."], correcta: "Formar e informar a los trabajadores." },
-            { esquerra: "Asumir los costes", opciones: ["Formar e informar a los trabajadores.", "La prevención debe formar parte del sistema de gestión de la empresa.", "Realizar una evaluación de los riesgos.", "Asegurar que los costes de prevención no recaen en el trabajador."], correcta: "Asegurar que los costes de prevención no recaen en el trabajador." }
+            { esquerra: "Integración de la prevención", correcta: "La prevención debe formar parte del sistema de gestión de la empresa." },
+            { esquerra: "Evaluación de riesgos", correcta: "Realizar una evaluación de los riesgos." },
+            { esquerra: "Información y formación", correcta: "Formar e informar a los trabajadores." },
+            { esquerra: "Asumir los costes", correcta: "Asegurar que los costes de prevención no recaen en el trabajador." }
           ]
         },
         {
           pregunta: "El empresario tiene la obligación de ___________ los riesgos laborales.",
           tipus: "completar",
-          correcta: "evaluar"
+          correcta: "evaluar",
+          opcionsDesplegable: ["minimizar", "asumir", "eliminar", "evaluar"]
         },
         {
           pregunta: "¿Qué obligación tiene el trabajador respecto a su propia seguridad y la de terceros?",
@@ -344,15 +350,16 @@
         {
           pregunta: "La prevención de riesgos laborales debe estar integrada en el sistema general de gestión de la empresa, lo que se conoce como __________.",
           tipus: "completar",
-          correcta: "integración de la prevención"
+          correcta: "integración de la prevención",
+          opcionsDesplegable: ["planificación estratégica", "gestión de calidad", "integración de la prevención", "auditoría preventiva"]
         },
         {
           pregunta: "Relaciona cada modalidad de organización preventiva con su ámbito de aplicación general:",
           tipus: "relacionar",
           parelles: [
-            { esquerra: "Asunción personal por el empresario", opciones: ["Empresas con menos de 6 trabajadores y sin riesgos especiales.", "Empresas de cualquier tamaño o con riesgos especiales.", "Empresas grandes o con riesgos importantes."], correcta: "Empresas con menos de 6 trabajadores y sin riesgos especiales." },
-            { esquerra: "Trabajador/es Designado/s", opciones: ["Empresas con menos de 6 trabajadores y sin riesgos especiales.", "Empresas entre 6 y 50 trabajadores con riesgo normal, o 250 con un solo centro y riesgo normal.", "Empresas grandes o con riesgos importantes."], correcta: "Empresas entre 6 y 50 trabajadores con riesgo normal, o 250 con un solo centro y riesgo normal." },
-            { esquerra: "Servicio de Prevención Ajeno", opciones: ["Empresas con menos de 6 trabajadores y sin riesgos especiales.", "Empresas entre 6 y 50 trabajadores con riesgo normal, o 250 con un solo centro y riesgo normal.", "Empresas que no pueden asumir la prevención con medios propios."], correcta: "Empresas que no pueden asumir la prevención con medios propios." }
+            { esquerra: "Asunción personal por el empresario", correcta: "Empresas con menos de 6 trabajadores y sin riesgos especiales." },
+            { esquerra: "Trabajador/es Designado/s", correcta: "Empresas entre 6 y 50 trabajadores con riesgo normal, o 250 con un solo centro y riesgo normal." },
+            { esquerra: "Servicio de Prevención Ajeno", correcta: "Empresas que no pueden asumir la prevención con medios propios." }
           ]
         },
         {
@@ -368,53 +375,60 @@
         }
       ],
       2: [
-        // Preguntas del PDF - Ejercicio 4 (Abiertas)
+        // Preguntas del PDF - Ejercicio 4 (Abiertas, ahora con desplegable)
         {
           pregunta: "Si el empresario delega las actividades preventivas en trabajadores designados o en un servicio de prevención, ¿queda eximido de su responsabilidad?",
           tipus: "completar",
-          correcta: "No, la responsabilidad es siempre indelegable."
+          correcta: "No, la responsabilidad es siempre indelegable.",
+          opcionsDesplegable: ["Sí, completamente", "Sí, parcialmente", "No, la responsabilidad es siempre indelegable.", "Depende del tamaño de la empresa"]
         },
         {
           pregunta: "¿Sobre quién recae el coste de las medidas relativas a la seguridad y salud en el trabajo?",
           tipus: "completar",
-          correcta: "El coste recae sobre el empresario. Bajo ningún concepto puede recaer sobre el trabajador."
+          correcta: "El coste recae sobre el empresario. Bajo ningún concepto puede recaer sobre el trabajador.",
+          opcionsDesplegable: ["El coste recae sobre el trabajador.", "El coste es compartido entre empresario y trabajador.", "El coste recae sobre el empresario. Bajo ningún concepto puede recaer sobre el trabajador.", "El coste es cubierto por la Seguridad Social."]
         },
         {
           pregunta: "¿El tiempo dedicado a la formación en prevención de riesgos laborales es tiempo de trabajo?",
           tipus: "completar",
-          correcta: "Sí, se considera tiempo de trabajo a todos los efectos."
+          correcta: "Sí, se considera tiempo de trabajo a todos los efectos.",
+          opcionsDesplegable: ["No, es tiempo libre del trabajador.", "Solo si se realiza fuera del horario laboral.", "Sí, se considera tiempo de trabajo a todos los efectos.", "Solo si el trabajador lo solicita."]
         },
         {
           pregunta: "¿A través de quién se llevan a cabo las consultas que el empresario debe realizar a los trabajadores en materia de prevención?",
           tipus: "completar",
-          correcta: "A través de los Delegados de Prevención o, en su defecto, a través de los Representantes de los Trabajadores."
+          correcta: "A través de los Delegados de Prevención o, en su defecto, a través de los Representantes de los Trabajadores.",
+          opcionsDesplegable: ["A través de los sindicatos exclusivamente.", "A través de los Delegados de Prevención o, en su defecto, a través de los Representantes de los Trabajadores.", "Directamente con cada trabajador.", "A través de encuestas anónimas."]
         },
         {
           pregunta: "¿Tienen los trabajadores derecho a la confidencialidad de la información relacionada con su estado de salud?",
           tipus: "completar",
-          correcta: "Sí, tienen derecho a la confidencialidad de toda la información relacionada con su estado de salud."
+          correcta: "Sí, tienen derecho a la confidencialidad de toda la información relacionada con su estado de salud.",
+          opcionsDesplegable: ["No, el empresario puede acceder a ella.", "Solo si la información es grave.", "Sí, tienen derecho a la confidencialidad de toda la información relacionada con su estado de salud.", "Solo si lo autoriza un médico."]
         },
         {
           pregunta: "¿Los trabajadores tienen necesariamente que ser acompañados por los delegados de prevención para poner denuncias ante la Inspección de trabajo?",
           tipus: "completar",
-          correcta: "No, los trabajadores no tienen necesariamente que ser acompañados. Tienen derecho a acudir a la Inspección de Trabajo por sí solos."
+          correcta: "No, los trabajadores no tienen necesariamente que ser acompañados. Tienen derecho a acudir a la Inspección de Trabajo por sí solos.",
+          opcionsDesplegable: ["Sí, es obligatorio ser acompañado.", "No, los trabajadores no tienen necesariamente que ser acompañados. Tienen derecho a acudir a la Inspección de Trabajo por sí solos.", "Solo si la denuncia es anónima.", "Solo si el delegado de prevención lo autoriza."]
         },
         // Preguntas del PDF - Ejercicio 5 (Relacionar)
         {
           pregunta: "Relaciona los siguientes conceptos con el tipo de riesgo al que corresponden:",
           tipus: "relacionar",
           parelles: [
-            { esquerra: "Riesgos derivados de las condiciones de seguridad", opciones: ["CARGA MENTAL", "EL HORARIO Y EL RITMO DE TRABAJO", "EXPOSICIÓN A AGENTES BIOLÓGICOS", "HERRAMIENTAS Y EQUIPOS DE TRABAJO."], correcta: "HERRAMIENTAS Y EQUIPOS DE TRABAJO." },
-            { esquerra: "Riesgos derivados de la organización del trabajo", opciones: ["CARGA MENTAL", "EL HORARIO Y EL RITMO DE TRABAJO", "EXPOSICIÓN A AGENTES BIOLÓGICOS", "HERRAMIENTAS Y EQUIPOS DE TRABAJO."], correcta: "EL HORARIO Y EL RITMO DE TRABAJO" },
-            { esquerra: "Riesgos derivados de la carga de trabajo", opciones: ["CARGA MENTAL", "EL HORARIO Y EL RITMO DE TRABAJO", "EXPOSICIÓN A AGENTES BIOLÓGICOS", "HERRAMIENTAS Y EQUIPOS DE TRABAJO."], correcta: "CARGA MENTAL" },
-            { esquerra: "Riesgos derivados del medio ambiente de trabajo", opciones: ["CARGA MENTAL", "EL HORARIO Y EL RITMO DE TRABAJO", "EXPOSICIÓN A AGENTES BIOLÓGICOS", "HERRAMIENTAS Y EQUIPOS DE TRABAJO."], correcta: "EXPOSICIÓN A AGENTES BIOLÓGICOS" }
+            { esquerra: "Riesgos derivados de las condiciones de seguridad", correcta: "HERRAMIENTAS Y EQUIPOS DE TRABAJO." },
+            { esquerra: "Riesgos derivados de la organización del trabajo", correcta: "EL HORARIO Y EL RITMO DE TRABAJO" },
+            { esquerra: "Riesgos derivados de la carga de trabajo", correcta: "CARGA MENTAL" },
+            { esquerra: "Riesgos derivados del medio ambiente de trabajo", correcta: "EXPOSICIÓN A AGENTES BIOLÓGICOS" }
           ]
         },
         // Nuevas preguntas del PowerPoint - Nivel 2
         {
           pregunta: "¿Qué significan las siglas EPI en el contexto de prevención de riesgos laborales?",
           tipus: "completar",
-          correcta: "Equipo de Protección Individual"
+          correcta: "Equipo de Protección Individual",
+          opcionsDesplegable: ["Elementos de Protección Integral", "Equipo de Prevención Industrial", "Equipo de Protección Individual", "Estándares de Protección Inmediata"]
         },
         {
           pregunta: "¿Cuál es el objetivo principal de la Medicina del Trabajo?",
@@ -430,7 +444,8 @@
         {
           pregunta: "La Medicina del Trabajo se especializa en la interacción entre el ser humano y el medio __________.",
           tipus: "completar",
-          correcta: "de trabajo"
+          correcta: "de trabajo",
+          opcionsDesplegable: ["social", "natural", "de vida", "de trabajo"]
         },
         {
           pregunta: "¿Qué técnica preventiva se enfoca en el estudio de las condiciones ambientales de trabajo y los agentes contaminantes?",
@@ -457,21 +472,23 @@
         {
           pregunta: "La __________ se ocupa del diseño de puestos de trabajo y la adaptación del trabajo a la persona.",
           tipus: "completar",
-          correcta: "ergonomía"
+          correcta: "ergonomía",
+          opcionsDesplegable: ["psicosociología", "higiene", "ergonomía", "seguridad"]
         },
         {
           pregunta: "Relaciona el tipo de daño derivado del trabajo con su característica principal:",
           tipus: "relacionar",
           parelles: [
-            { esquerra: "Accidente de Trabajo", opciones: ["Suceso repentino", "Enfermedad de lenta aparición", "Daño que no es accidente ni enfermedad profesional"], correcta: "Suceso repentino" },
-            { esquerra: "Enfermedad Profesional", opciones: ["Suceso repentino", "Enfermedad de lenta aparición", "Daño que no es accidente ni enfermedad profesional"], correcta: "Enfermedad de lenta aparición" },
-            { esquerra: "Otras patologías o lesiones", opciones: ["Suceso repentino", "Enfermedad de lenta aparición", "Daño que no es accidente ni enfermedad profesional"], correcta: "Daño que no es accidente ni enfermedad profesional" }
+            { esquerra: "Accidente de Trabajo", correcta: "Suceso repentino" },
+            { esquerra: "Enfermedad Profesional", correcta: "Enfermedad de lenta aparición" },
+            { esquerra: "Otras patologías o lesiones", correcta: "Daño que no es accidente ni enfermedad profesional" }
           ]
         },
         {
           pregunta: "Los ____________ son un conjunto de técnicas y procedimientos que tienen por objeto eliminar o reducir el riesgo de que se produzcan accidentes de trabajo.",
           tipus: "completar",
-          correcta: "riesgos de seguridad"
+          correcta: "riesgos de seguridad",
+          opcionsDesplegable: ["riesgos higiénicos", "riesgos de seguridad", "riesgos psicosociales", "riesgos ergonómicos"]
         },
         {
           pregunta: "¿Qué es un 'incidente' en prevención de riesgos laborales?",
@@ -499,15 +516,16 @@
           pregunta: "Relaciona el concepto con su definición:",
           tipus: "relacionar",
           parelles: [
-            { esquerra: "Peligro", opciones: ["Situación o característica intrínseca que puede causar daño.", "Probabilidad de que el daño se materialice.", "Conjunto de medidas para evitar o reducir riesgos."], correcta: "Situación o característica intrínseca que puede causar daño." },
-            { esquerra: "Riesgo", opciones: ["Situación o característica intrínseca que puede causar daño.", "Probabilidad de que el daño se materialice.", "Conjunto de medidas para evitar o reducir riesgos."], correcta: "Probabilidad de que el daño se materialice." },
-            { esquerra: "Prevención", opciones: ["Situación o característica intrínseca que puede causar daño.", "Probabilidad de que el daño se materialice.", "Conjunto de medidas para evitar o reducir riesgos."], correcta: "Conjunto de medidas para evitar o reducir riesgos." }
+            { esquerra: "Peligro", correcta: "Situación o característica intrínseca que puede causar daño." },
+            { esquerra: "Riesgo", correcta: "Probabilidad de que el daño se materialice." },
+            { esquerra: "Prevención", correcta: "Conjunto de medidas para evitar o reducir riesgos." }
           ]
         },
         {
           pregunta: "Las 'causas' de un accidente de trabajo pueden clasificarse en actos inseguros y __________ inseguras.",
           tipus: "completar",
-          correcta: "condiciones"
+          correcta: "condiciones",
+          opcionsDesplegable: ["errores", "fallos", "condiciones", "sucesos"]
         },
         {
           pregunta: "¿Cuál de las siguientes es una técnica preventiva de la Medicina del Trabajo?",
@@ -554,16 +572,17 @@
         {
           pregunta: "El empresario debe garantizar la protección de los trabajadores frente a los riesgos laborales, mediante la adopción de cuántas medidas sean necesarias. Este principio se basa en el deber de ____________.",
           tipus: "completar",
-          correcta: "protección"
+          correcta: "protección",
+          opcionsDesplegable: ["responsabilidad", "cooperación", "protección", "vigilancia"]
         },
         {
           pregunta: "Relaciona el derecho del trabajador con su descripción:",
           tipus: "relacionar",
           parelles: [
-            { esquerra: "Derecho a la información", opciones: ["Conocer los riesgos de su puesto y las medidas preventivas.", "Recibir formación específica y suficiente.", "Proponer mejoras en las condiciones de trabajo.", "Paralizar la actividad si hay riesgo grave e inminente."], correcta: "Conocer los riesgos de su puesto y las medidas preventivas." },
-            { esquerra: "Derecho a la formación", opciones: ["Conocer los riesgos de su puesto y las medidas preventivas.", "Recibir formación específica y suficiente.", "Proponer mejoras en las condiciones de trabajo.", "Paralizar la actividad si hay riesgo grave e inminente."], correcta: "Recibir formación específica y suficiente." },
-            { esquerra: "Derecho de participación y consulta", opciones: ["Conocer los riesgos de su puesto y las medidas preventivas.", "Recibir formación específica y suficiente.", "Proponer mejoras en las condiciones de trabajo.", "Paralizar la actividad si hay riesgo grave e inminente."], correcta: "Proponer mejoras en las condiciones de trabajo." },
-            { esquerra: "Derecho a la paralización", opciones: ["Conocer los riesgos de su puesto y las medidas preventivas.", "Recibir formación específica y suficiente.", "Proponer mejoras en las condiciones de trabajo.", "Paralizar la actividad si hay riesgo grave e inminente."], correcta: "Paralizar la actividad si hay riesgo grave e inminente." }
+            { esquerra: "Derecho a la información", correcta: "Conocer los riesgos de su puesto y las medidas preventivas." },
+            { esquerra: "Derecho a la formación", correcta: "Recibir formación específica y suficiente." },
+            { esquerra: "Derecho de participación y consulta", correcta: "Proponer mejoras en las condiciones de trabajo." },
+            { esquerra: "Derecho a la paralización", correcta: "Paralizar la actividad si hay riesgo grave e inminente." }
           ]
         },
         {
@@ -580,26 +599,29 @@
         {
           pregunta: "Los ____________ de Prevención son los representantes de los trabajadores con funciones específicas en materia de prevención de riesgos laborales.",
           tipus: "completar",
-          correcta: "Delegados"
+          correcta: "Delegados",
+          opcionsDesplegable: ["Gestores", "Comités", "Delegados", "Coordinadores"]
         },
         {
           pregunta: "El Comité de Seguridad y Salud es obligatorio en empresas con más de _________ trabajadores.",
           tipus: "completar",
-          correcta: "50"
+          correcta: "50",
+          opcionsDesplegable: ["10", "25", "50", "100"]
         },
         {
           pregunta: "Relaciona el documento preventivo con su objetivo:",
           tipus: "relacionar",
           parelles: [
-            { esquerra: "Evaluación de Riesgos", opciones: ["Identificar los peligros y valorar los riesgos para la seguridad y salud.", "Definir cómo se van a controlar y reducir los riesgos identificados.", "Establecer la estructura de la gestión preventiva en la empresa."], correcta: "Identificar los peligros y valorar los riesgos para la seguridad y salud." },
-            { esquerra: "Planificación de la Actividad Preventiva", opciones: ["Identificar los peligros y valorar los riesgos para la seguridad y salud.", "Definir cómo se van a controlar y reducir los riesgos identificados.", "Establecer la estructura de la gestión preventiva en la empresa."], correcta: "Definir cómo se van a controlar y reducir los riesgos identificados." },
-            { esquerra: "Plan de Prevención", opciones: ["Identificar los peligros y valorar los riesgos para la seguridad y salud.", "Definir cómo se van a controlar y reducir los riesgos identificados.", "Establecer la estructura de la gestión preventiva en la empresa."], correcta: "Establecer la estructura de la gestión preventiva en la empresa." }
+            { esquerra: "Evaluación de Riesgos", correcta: "Identificar los peligros y valorar los riesgos para la seguridad y salud." },
+            { esquerra: "Planificación de la Actividad Preventiva", correcta: "Definir cómo se van a controlar y reducir los riesgos identificados." },
+            { esquerra: "Plan de Prevención", correcta: "Establecer la estructura de la gestión preventiva en la empresa." }
           ]
         },
         {
           pregunta: "La vigilancia de la salud debe ser ___________, salvo excepciones como las recogidas en la normativa.",
           tipus: "completar",
-          correcta: "voluntaria"
+          correcta: "voluntaria",
+          opcionsDesplegable: ["obligatoria", "periódica", "voluntaria", "gratuita"]
         },
         {
           pregunta: "¿Qué organismo es el encargado de la vigilancia y el control del cumplimiento de la normativa de prevención de riesgos laborales?",
@@ -615,15 +637,16 @@
         {
           pregunta: "Los accidentes de trabajo deben ser comunicados a la autoridad laboral en un plazo de _________ días hábiles.",
           tipus: "completar",
-          correcta: "cinco"
+          correcta: "cinco",
+          opcionsDesplegable: ["tres", "cinco", "diez", "quince"]
         },
         {
           pregunta: "Relaciona el tipo de emergencia con la acción principal:",
           tipus: "relacionar",
           parelles: [
-            { esquerra: "Conato de emergencia", opciones: ["Se controla con los medios disponibles en el lugar de trabajo.", "Requiere la actuación de equipos de emergencia externos.", "Se extienden a varios sectores y requieren desalojo parcial.", "Requiere la evacuación total del centro de trabajo."], correcta: "Se controla con los medios disponibles en el lugar de trabajo." },
-            { esquerra: "Emergencia parcial", opciones: ["Se controla con los medios disponibles en el lugar de trabajo.", "Requiere la actuación de equipos de emergencia externos.", "Se extienden a varios sectores y requieren desalojo parcial.", "Requiere la evacuación total del centro de trabajo."], correcta: "Se extienden a varios sectores y requieren desalojo parcial." },
-            { esquerra: "Emergencia general", opciones: ["Se controla con los medios disponibles en el lugar de trabajo.", "Requiere la actuación de equipos de emergencia externos.", "Se extienden a varios sectores y requieren desalojo parcial.", "Requiere la evacuación total del centro de trabajo."], correcta: "Requiere la evacuación total del centro de trabajo." }
+            { esquerra: "Conato de emergencia", correcta: "Se controla con los medios disponibles en el lugar de trabajo." },
+            { esquerra: "Emergencia parcial", correcta: "Se extienden a varios sectores y requieren desalojo parcial." },
+            { esquerra: "Emergencia general", correcta: "Requiere la evacuación total del centro de trabajo." }
           ]
         },
         {
@@ -640,7 +663,8 @@
         {
           pregunta: "La gestión de la prevención en la empresa debe ser un proceso ____________ y ____________.",
           tipus: "completar",
-          correcta: "continuo y dinámico"
+          correcta: "continuo y dinámico",
+          opcionsDesplegable: ["estático y rígido", "obligatorio y anual", "continuo y dinámico", "teórico y práctico"]
         },
         {
           pregunta: "¿Qué tipo de EPI se utilizaría para proteger las manos de cortes?",
@@ -657,16 +681,17 @@
           pregunta: "Relaciona el tipo de EPI con la zona del cuerpo que protege:",
           tipus: "relacionar",
           parelles: [
-            { esquerra: "Casco", opciones: ["Vías respiratorias", "Cabeza", "Pies", "Ojos"], correcta: "Cabeza" },
-            { esquerra: "Mascarilla", opciones: ["Vías respiratorias", "Cabeza", "Pies", "Ojos"], correcta: "Vías respiratorias" },
-            { esquerra: "Botas de seguridad", opciones: ["Vías respiratorias", "Cabeza", "Pies", "Ojos"], correcta: "Pies" },
-            { esquerra: "Gafas de seguridad", opciones: ["Vías respiratorias", "Cabeza", "Pies", "Ojos"], correcta: "Ojos" }
+            { esquerra: "Casco", correcta: "Cabeza" },
+            { esquerra: "Mascarilla", correcta: "Vías respiratorias" },
+            { esquerra: "Botas de seguridad", correcta: "Pies" },
+            { esquerra: "Gafas de seguridad", correcta: "Ojos" }
           ]
         },
         {
           pregunta: "La Ley de Prevención de Riesgos Laborales tiene como objetivo promover la mejora de las condiciones de trabajo para elevar el nivel de ____________ y ____________ de los trabajadores.",
           tipus: "completar",
-          correcta: "seguridad y salud"
+          correcta: "seguridad y salud",
+          opcionsDesplegable: ["productividad y eficiencia", "seguridad y salud", "bienestar y confort", "salario y beneficios"]
         },
         {
           pregunta: "¿Qué principio de la acción preventiva implica adaptar el trabajo a la persona?",
@@ -682,12 +707,19 @@
         {
           pregunta: "Las medidas de emergencia deben incluir los ___________, la ___________ y los ___________ en caso de siniestro.",
           tipus: "completar",
-          correcta: "primeros auxilios, lucha contra incendios, evacuación de los trabajadores"
+          correcta: "primeros auxilios, lucha contra incendios, evacuación de los trabajadores",
+          opcionsDesplegable: [
+            "primeros auxilios, formación y simulacros",
+            "primeros auxilios, equipos de rescate y zonas seguras",
+            "primeros auxilios, lucha contra incendios, evacuación de los trabajadores",
+            "señalización, protocolos y alarmas"
+          ]
         },
         {
           pregunta: "El principio de 'integrar la prevención en el conjunto de actividades de la empresa' significa que debe estar presente en todas las decisiones y en todos los __________.",
           tipus: "completar",
-          correcta: "niveles"
+          correcta: "niveles",
+          opcionsDesplegable: ["departamentos", "empleados", "niveles", "proyectos"]
         },
         {
           pregunta: "¿Qué importancia tiene la 'cooperación' entre empresario y trabajadores en la prevención de riesgos?",
@@ -764,16 +796,7 @@
         btn.disabled = false;
         btn.classList.remove('bg-gray-400', 'cursor-not-allowed');
       });
-      // Deshabilitar botones de niveles superiores si el nivel actual no está completado (opcional, para forzar orden)
-      // for (let i = 1; i <= Object.keys(totsElsNivellsPreguntes).length; i++) {
-      //   const btn = document.querySelector(`.level-button[onclick="iniciaNivell(${i})"]`);
-      //   if (i > nivellActual && nivellActual !== 0) { // Si no estamos en el primer nivel y es un nivel superior
-      //     btn.disabled = true;
-      //     btn.classList.add('bg-gray-400', 'cursor-not-allowed');
-      //   }
-      // }
     }
-
 
     function mostrarPregunta() {
       if (preguntaIndexActual < preguntesActuals.length) {
@@ -841,38 +864,36 @@
     }
 
     function mostrarPreguntaCompletar(pregunta) {
-      const inputDiv = document.createElement('div');
-      inputDiv.classList.add('mb-4');
-      inputDiv.innerHTML = `
-        <label for="respuesta-completar" class="block text-lg font-medium mb-2">Completa la frase:</label>
-        <input type="text" id="respuesta-completar" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Escriu la teva resposta aquí...">
+      const selectDiv = document.createElement('div');
+      selectDiv.classList.add('mb-4');
+      selectDiv.innerHTML = `
+        <label for="respuesta-completar" class="block text-lg font-medium mb-2">Selecciona la opción correcta para completar la frase:</label>
+        <select id="respuesta-completar" class="w-full px-4 py-2 border rounded-lg bg-white focus:ring-2 focus:ring-blue-500">
+          <option value="" disabled selected>Selecciona una opción</option>
+          ${shuffleArray([...pregunta.opcionsDesplegable]).map(op => `<option value="${op}">${op}</option>`).join('')}
+        </select>
         <button id="validar-completar" class="mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">Comprova</button>
       `;
-      questionArea.appendChild(inputDiv);
+      questionArea.appendChild(selectDiv);
 
       document.getElementById('validar-completar').onclick = () => validarRespuestaCompletar(pregunta.correcta);
-      document.getElementById('respuesta-completar').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          document.getElementById('validar-completar').click();
-        }
-      });
+      // No hay evento 'keypress' para select, solo 'change'
     }
 
     function validarRespuestaCompletar(respuestaCorrecta) {
-      const input = document.getElementById('respuesta-completar');
-      const userAnswer = input.value.trim().toLowerCase();
-      const normalizedCorrectAnswer = typeof respuestaCorrecta === 'string' ? respuestaCorrecta.toLowerCase() : respuestaCorrecta;
+      const select = document.getElementById('respuesta-completar');
+      const userAnswer = select.value.trim();
 
-      input.disabled = true; // Deshabilitar input
+      select.disabled = true; // Deshabilitar select
       document.getElementById('validar-completar').disabled = true; // Deshabilitar botón de validar
       totalPreguntesRespostes++;
 
-      if (userAnswer === normalizedCorrectAnswer) {
-        input.classList.add('bg-green-100', 'border-green-500');
+      if (userAnswer === respuestaCorrecta) {
+        select.classList.add('bg-green-100', 'border-green-500');
         feedbackDiv.innerHTML = `<p class='text-green-600 font-bold'>😊 Molt bé! La resposta és: ${respuestaCorrecta}</p>`;
         encerts++;
       } else {
-        input.classList.add('bg-red-100', 'border-red-500');
+        select.classList.add('bg-red-100', 'border-red-500');
         feedbackDiv.innerHTML = `<p class='text-red-600 font-bold'>😢 No és correcte. La resposta correcta és: <strong>${respuestaCorrecta}</strong></p>`;
         preguntesPendentsRepas.push(preguntesActuals[preguntaIndexActual]);
       }
@@ -881,12 +902,13 @@
       updateProgressBar();
     }
 
+
     function mostrarPreguntaRelacionar(pregunta) {
       const relacionarDiv = document.createElement('div');
       relacionarDiv.classList.add('grid', 'grid-cols-2', 'gap-4', 'mb-4');
 
-      let opcionesDerecha = pregunta.parelles.map(p => p.opciones).flat();
-      opcionesDerecha = shuffleArray(opcionesDerecha); // Mezclar opciones de la derecha
+      // Recoger todas las respuestas correctas para las opciones de la derecha
+      let allRightOptions = pregunta.parelles.map(p => p.correcta);
 
       pregunta.parelles.forEach((pareja, index) => {
         const leftSide = document.createElement('div');
@@ -906,7 +928,8 @@
         defaultOption.selected = true;
         select.appendChild(defaultOption);
 
-        opcionesDerecha.forEach(opcion => {
+        // Mezclar las opciones de la derecha una vez para cada desplegable
+        shuffleArray(allRightOptions).forEach(opcion => {
           const option = document.createElement('option');
           option.value = opcion;
           option.textContent = opcion;
@@ -1069,12 +1092,6 @@
       }
       return array;
     }
-
-    // Inicialización al cargar la página (opcional, si quieres que se vea algo antes de seleccionar nivel)
-    // document.addEventListener('DOMContentLoaded', () => {
-    //   // Puedes iniciar un nivel por defecto o mostrar una pantalla de bienvenida
-    //   // iniciaNivell(1);
-    // });
 
   </script>
 </body>
